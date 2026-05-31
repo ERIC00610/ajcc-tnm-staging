@@ -4,6 +4,13 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>AJCC TNM 查詢表（8e / 9e 對照）</title>
+<!-- PWA：可安裝、離線使用 -->
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#0f1419">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="AJCC TNM">
 <style>
   :root{
     --bg:#0f1419; --panel:#161b22; --panel2:#1c232c; --border:#2b3441;
@@ -59,6 +66,44 @@
     font-size:12px;padding:9px 18px;text-align:center}
   .empty{text-align:center;color:var(--muted);padding:40px 0}
   a{color:var(--accent)}
+  /* 收藏星號 / Favorite star */
+  .star{cursor:pointer;font-size:16px;line-height:1;color:#3a4450;padding:2px 4px;border-radius:6px;
+    transition:color .12s,transform .12s;user-select:none}
+  .star:hover{color:#d8b531;transform:scale(1.15)}
+  .star.on{color:#f0c419}
+  /* 卡片內工具列 / Per-card toolbar */
+  .dtools{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0 2px}
+  .dtools button{background:var(--chipbg);border:1px solid var(--border);color:var(--muted);
+    font-size:11.5px;padding:4px 10px;border-radius:7px;cursor:pointer;transition:.12s}
+  .dtools button:hover{border-color:var(--accent);color:var(--accent)}
+  .dtools button.ok{color:var(--v9);border-color:var(--v9)}
+  .chip.fav.active{background:#f0c419;border-color:#f0c419;color:#1a1400}
+  /* TNM 計算器 / Stage calculator */
+  .calc{background:#11271a;border:1px solid var(--v9);border-radius:8px;padding:10px 12px;margin:6px 0 14px}
+  .calc h4{margin:0 0 8px;color:var(--v9);font-size:13px}
+  .calchint{color:var(--muted);font-weight:400;font-size:11px;margin-left:6px}
+  .calcrow{display:flex;gap:10px;flex-wrap:wrap}
+  .calcrow label{display:flex;align-items:center;gap:5px;font-size:13px;color:var(--muted)}
+  .calcrow select{background:var(--panel2);border:1px solid var(--border);color:var(--txt);
+    padding:5px 8px;border-radius:6px;font-size:13px;min-width:64px}
+  .calcres{margin-top:10px;font-size:14px;color:var(--muted)}
+  .calcres.ok{color:var(--txt)}
+  .calcres.ok b{color:#7ee2a0;font-size:18px;letter-spacing:.5px}
+  .calcres.warn{color:#e8c477}
+  .calcna{background:#2a1f12;border:1px solid #5c4318;color:#e8d5a8;font-size:12.5px;
+    padding:8px 11px;border-radius:6px;margin:6px 0 12px}
+  tr.hlrow td{background:#1b3a26 !important;box-shadow:inset 2px 0 0 var(--v9)}
+  /* 治療指引摘要 / Treatment guideline summary */
+  .tx{background:#10202e;border:1px solid #2b6a8f;border-radius:8px;padding:10px 13px;margin:10px 0 4px}
+  .tx h4{margin:0 0 6px;color:#74c4e8;font-size:13px}
+  .tx ul{margin:4px 0 8px;padding-left:18px}
+  .tx li{font-size:13px;line-height:1.55;margin:3px 0;color:var(--txt)}
+  .tx li b{color:#9bd6f0;font-weight:600}
+  .txlinks{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0 4px}
+  .txlinks a{display:inline-block;font-size:12px;padding:4px 10px;border:1px solid #2b6a8f;
+    border-radius:6px;color:#74c4e8;text-decoration:none;background:#0c1a25}
+  .txlinks a:hover{border-color:#74c4e8;color:#bfe7f7}
+  .txdis{font-size:11px;color:var(--muted);margin-top:7px;line-height:1.5;border-top:1px dashed #2b6a8f;padding-top:6px}
 </style>
 </head>
 <body>
@@ -71,6 +116,7 @@
     <div class="chip" data-ver="8">僅 8e</div>
     <div class="chip" data-ver="9">僅 9e</div>
     <div class="chip" data-detail="1">只看已填分期</div>
+    <div class="chip fav" data-fav="1">★ 收藏</div>
     <select id="part"><option value="all">所有部位系統</option></select>
   </div>
 </header>
@@ -571,12 +617,182 @@ const DATA = [
   note:"白血病無 TNM 解剖分期，依 WHO 分類。CLL 臨床用 Rai/Binet；急性白血病以 WHO/分子分型，不分期。"}}
 ];
 
+/* ---------- TNM 分期計算器（解析既有 stage 規則字串）----------
+   設計原則：安全優先。能確定才斷言；無法解析的章節判為「不可自動計算」，
+   退化為只顯示分期表 + 原因說明，絕不給出錯誤分期。 */
+function keysOf(rows){
+  if(!rows) return [];
+  return rows.filter(([k,v])=>k && !/[【】（）()\s]/.test(k)).map(([k])=>k);
+}
+function hasDupKeys(rows){ const ks=keysOf(rows); return new Set(ks).size!==ks.length; }
+function parseStageValue(val){
+  let s=String(val).replace(/（[^）]*）/g,'').replace(/\([^)]*\)/g,'')
+    .replace(/或/g,'；').replace(/且/g,' ');
+  return s.split(/[；;]/).map(cl=>cl.trim().split(/\s+/).filter(Boolean));
+}
+function catOf(tok){
+  if(/^T/i.test(tok)) return 'T';
+  if(/^N/i.test(tok)) return 'N';
+  if(/^M/i.test(tok)) return 'M';
+  return null;
+}
+function familyKeys(tok, ord){
+  return ord.filter(k => k===tok || (k.startsWith(tok) && /^[a-z]/i.test(k.slice(tok.length))));
+}
+function expandToken(tok, order){
+  const alts = tok.split('/'); let cat=null; const vals=new Set();
+  for(let a of alts){ a=a.trim(); if(!a) continue;
+    const rg=a.split(/[–—-]/);
+    if(rg.length===2){ let L=rg[0], R=rg[1]; const c=catOf(L); if(!c) return null;
+      if(/^[0-9]/.test(R)) R=L[0]+R; else if(/^[a-z]$/i.test(R)) R=L.replace(/[a-z]+$/i,'')+R;
+      const ord=order[c]; if(!ord||!ord.length) return null;
+      const Lk=familyKeys(L,ord), Rk=familyKeys(R,ord); if(!Lk.length||!Rk.length) return null;
+      const lo=ord.indexOf(Lk[0]), hi=ord.indexOf(Rk[Rk.length-1]); if(lo<0||hi<0) return null;
+      cat=cat||c; for(let i=Math.min(lo,hi);i<=Math.max(lo,hi);i++) vals.add(ord[i]);
+    } else { const c=catOf(a); if(!c) return null; const ord=order[c]||[];
+      const hit=familyKeys(a,ord); cat=cat||c;
+      if(hit.length) hit.forEach(v=>vals.add(v));
+      else if(ord.length) return null;
+      else vals.add(a); }
+  }
+  return cat?{cat,values:vals}:null;
+}
+function buildRules(dd){
+  if(!dd) return {eligible:false, reason:'no-detail'};
+  if(dd.sys) return {eligible:false, reason:'非 TNM 系統，無法以 T/N/M 計算'};
+  if(!dd.stage||!dd.stage.length) return {eligible:false, reason:'本章無 stage grouping'};
+  if(dd.S) return {eligible:false, reason:'需血清標記 S（如生殖細胞瘤），請對照下表'};
+  if(dd.G) return {eligible:false, reason:'需組織分級 G，請對照下表'};
+  if(dd.stage.some(([l])=>/臨床|病理/.test(l))) return {eligible:false, reason:'臨床/病理雙軌分期，請對照下表'};
+  if(dd.stage.some(([l])=>/歲|＜|≥|<55|≧/.test(l))) return {eligible:false, reason:'含年齡/特殊分層，請對照下表'};
+  if(hasDupKeys(dd.T)||hasDupKeys(dd.N)||hasDupKeys(dd.M)) return {eligible:false, reason:'多解剖亞部位（分類表標籤重複）'};
+  const order={T:keysOf(dd.T), N:keysOf(dd.N), M:keysOf(dd.M)};
+  if(!order.T.length||!order.N.length||!order.M.length) return {eligible:false, reason:'T/N/M 分類表不完整'};
+  const rules=[];
+  for(const [label,val] of dd.stage){
+    if(/[【】]/.test(label)) return {eligible:false, reason:'含亞群標題列，請對照下表'};
+    const clauses=parseStageValue(val); const ruleClauses=[];
+    for(const toks of clauses){ const need={};
+      for(const tok of toks){ if(tok==='any'||tok==='任何'||tok==='T'||tok==='N'||tok==='M') continue;
+        const ex=expandToken(tok, order); if(!ex) return {eligible:false, reason:'分期規則與分類表粒度不一致'};
+        if(need[ex.cat]) ex.values.forEach(v=>need[ex.cat].add(v)); else need[ex.cat]=new Set(ex.values); }
+      ruleClauses.push(need); }
+    rules.push({label, clauses:ruleClauses});
+  }
+  if(order.T.length && order.N.length && order.M.includes('M0')){
+    const realT=order.T.filter(t=>!/^(Tis|Ta|T0)\b/.test(t)); let den=0, uniq=0;
+    for(const T of realT) for(const N of order.N){ den++; if(matchStage(rules,{T,N,M:'M0'}).length===1) uniq++; }
+    if(den && uniq/den < 0.7) return {eligible:false, reason:'分期規則與 T/N/M 粒度不一致（涵蓋不足）'};
+  }
+  return {eligible:true, order, rules};
+}
+function matchStage(rules, sel){
+  const matches=[];
+  for(const r of rules){ for(const need of r.clauses){ let ok=true;
+    if(need.T && !need.T.has(sel.T)) ok=false;
+    if(ok && need.N && !need.N.has(sel.N)) ok=false;
+    if(ok){ if(need.M){ if(!need.M.has(sel.M)) ok=false; } else { if(sel.M!=='M0') ok=false; } }
+    if(ok){ matches.push(r.label); break; } } }
+  return matches;
+}
+// 預先為每章建立計算規則
+const CALC={};
+DATA.forEach(d=>{ if(d.d) CALC[d.ch]=buildRules(d.d); });
+
+/* ---------- 治療指引摘要（第一階段：常見癌別）----------
+   重要：以下為依一般腫瘤學原則「自行整理」的高階治療架構，非 NCCN/ESMO 原文逐字內容
+   （該等指引受版權保護）。僅供教學與分期對照，實際治療須個別化並以最新原始指引為準。
+   連結指向官方來源：NCCN（需免費註冊登入）與 ESMO（公開）。 */
+const NCCN_LINK='https://www.nccn.org/guidelines/category_1';
+const ESMO='https://www.esmo.org/guidelines/guidelines-by-topic/';
+const ESMO_GI=ESMO+'esmo-clinical-practice-guidelines-gastrointestinal-cancers';
+const ESMO_GU=ESMO+'esmo-clinical-practice-guidelines-genitourinary-cancers';
+const ESMO_LUNG=ESMO+'esmo-clinical-practice-guidelines-lung-and-chest-tumours';
+const ESMO_HN=ESMO+'esmo-clinical-practice-guidelines-head-and-neck-cancers';
+const ESMO_BREAST=ESMO+'esmo-clinical-practice-guidelines-breast-cancer';
+const ESMO_ENDO=ESMO+'esmo-clinical-practice-guidelines-endocrine-and-neuroendocrine-cancers';
+const TX={
+  7:{title:'口腔癌 Oral Cavity', esmo:ESMO_HN, principles:[
+    '<b>早期（I–II / T1–2 N0）</b>：單一模式即可。首選根治性手術切除（含安全邊界）；cN0 視侵犯深度做選擇性頸部廓清（elective neck dissection），或根治性放療擇一。',
+    '<b>局部晚期（III–IV / T3–4 或 N+）</b>：手術＋術後輔助放療；具高風險病理特徵（切緣陽性、淋巴結囊外侵犯 ENE）者加同步化放療（cisplatin-based CCRT）。',
+    '<b>不可切除／拒絕手術</b>：根治性同步化放療。',
+    '<b>復發／轉移（M1）</b>：全身性治療為主（platinum＋5-FU±cetuximab，或 PD-1 免疫治療 pembrolizumab／nivolumab），評估再放療或挽救性手術。',
+    '整體照護：戒菸戒檳榔、營養與牙科評估。']},
+  16:{title:'食道與胃食道交界 Esophagus & EGJ', esmo:ESMO_GI, principles:[
+    '<b>極早期（Tis／T1a）</b>：內視鏡切除（EMR／ESD）可治癒黏膜病變。',
+    '<b>可切除局部晚期（≥cT1b N0、或 T3–4a／N+）</b>：神經輔助同步化放療（如 CROSS）後手術，或周術期化療（腺癌用 FLOT）。',
+    '鱗狀細胞癌對 CRT 反應佳，部分採根治性同步化放療。',
+    '<b>不可切除／M1</b>：全身性化療為主；HER2+ 加 trastuzumab；評估 PD-L1 免疫治療。',
+    '支持：吞嚥困難可放食道支架、營養支持。']},
+  17:{title:'胃癌 Stomach', esmo:ESMO_GI, principles:[
+    '<b>早期（T1a 侷限黏膜、無不良特徵）</b>：內視鏡切除（ESD）可治癒。',
+    '<b>可切除（≥T1b 或 N+）</b>：根治性胃切除＋D2 淋巴結廓清；周術期化療（FLOT）或術後輔助化療／化放療。',
+    '<b>不可切除／轉移</b>：全身性化療（platinum＋fluoropyrimidine）為骨幹；HER2+ 加 trastuzumab；PD-L1+ 考慮免疫治療；Claudin18.2+ 可考慮 zolbetuximab。',
+    '腹膜轉移、惡性腹水常見，需支持治療。']},
+  20:{title:'結腸與直腸癌 Colon & Rectum', esmo:ESMO_GI, principles:[
+    '<b>結腸癌局部（I–III）</b>：根治性切除＋區域淋巴結廓清；III 期（N+）術後輔助化療（FOLFOX／CAPOX），II 期視高風險特徵決定。',
+    '<b>直腸癌局部晚期（cT3–4 或 N+）</b>：全程新輔助治療（TNT：化療＋長程CRT 或短程放療）後 TME 手術；dMMR／MSI-H 者免疫治療反應佳。',
+    '<b>轉移（M1）</b>：全身化療（FOLFOX／FOLFIRI）±標靶（RAS wild-type 加 anti-EGFR；或 bevacizumab）；肝／肺寡轉移評估根治性切除。',
+    '分子檢測（RAS、BRAF、MMR／MSI、HER2）指導標靶與免疫選擇。']},
+  22:{title:'肝細胞癌 HCC', esmo:ESMO_GI, principles:[
+    '治療綜合肝功能（Child-Pugh）、體能與腫瘤負荷（BCLC 分期），非單純依 TNM。',
+    '<b>極早期／早期</b>：根治性處置—手術切除、肝移植（符合 Milan criteria）、或局部消融（RFA）。',
+    '<b>中期（多發、無血管侵犯／肝外轉移）</b>：經動脈化療栓塞（TACE）。',
+    '<b>晚期（血管侵犯或肝外轉移）</b>：全身性治療—首選 atezolizumab＋bevacizumab，或 durvalumab＋tremelimumab、TKI（sorafenib／lenvatinib）。',
+    '潛在肝病（HBV／HCV、肝硬化）須同步治療與監測。']},
+  36:{title:'肺癌 Lung（以 NSCLC 為主）', esmo:ESMO_LUNG, principles:[
+    '<b>早期（I–II，可切除）</b>：根治性手術（肺葉切除＋縱膈淋巴結廓清）；高風險者術後輔助化療，EGFR 突變者輔助 osimertinib，並評估周術期免疫治療。',
+    '<b>局部晚期（III）</b>：可切除者多模式治療；不可切除者根治性同步化放療後 durvalumab 鞏固。',
+    '<b>轉移（IV）</b>：依生物標記分流—驅動突變（EGFR／ALK／ROS1／BRAF／KRAS G12C 等）給對應標靶；無驅動突變依 PD-L1 給免疫±化療。',
+    '所有病人應做分子檢測與 PD-L1。小細胞肺癌（SCLC）策略不同（化療＋免疫±放療）。']},
+  48:{title:'乳癌 Breast', esmo:ESMO_BREAST, principles:[
+    '治療由分期＋受體狀態（ER／PR、HER2、Ki-67）共同決定。',
+    '<b>早期可手術</b>：乳房保留手術＋全乳放療，或乳房切除；前哨淋巴結評估腋窩。',
+    '<b>全身性輔助／新輔助</b>：HR+ 給內分泌治療（±CDK4／6 抑制劑）；HER2+ 給 anti-HER2（trastuzumab±pertuzumab、T-DM1／T-DXd）；三陰性給化療±免疫（pembrolizumab）。',
+    '<b>局部晚期／發炎性</b>：先新輔助全身治療再手術。',
+    '<b>轉移（IV）</b>：依亞型選全身治療，骨轉移加骨保護劑；以延長存活與症狀控制為目標。']},
+  58:{title:'攝護腺癌 Prostate', esmo:ESMO_GU, principles:[
+    '治療依風險分層（PSA、Gleason／ISUP grade、臨床分期）與餘命綜合判斷。',
+    '<b>侷限性低風險</b>：主動監測（active surveillance）為合理選擇。',
+    '<b>侷限性中高風險</b>：根治性攝護腺切除或根治性放療±雄性素剝奪治療（ADT）。',
+    '<b>局部晚期／高風險</b>：放療＋長程 ADT，部分加 abiraterone。',
+    '<b>轉移（M1）</b>：ADT 為骨幹＋ARPI（abiraterone／enzalutamide／apalutamide）±docetaxel；去勢抗性後依序用化療、PARP 抑制劑（HRR 突變）、Lu-177 PSMA、radium-223。']},
+  62:{title:'膀胱癌 Urinary Bladder', esmo:ESMO_GU, principles:[
+    '<b>非肌肉侵犯（NMIBC：Ta／T1／Tis）</b>：經尿道腫瘤切除（TURBT）＋依風險給膀胱內 BCG 或化療灌注。',
+    '<b>肌肉侵犯（MIBC：≥T2）</b>：新輔助 cisplatin-based 化療後根治性膀胱切除＋尿路重建；不適合手術者考慮膀胱保留三模式（最大 TURBT＋同步化放療）。',
+    '<b>轉移（M1）</b>：platinum-based 化療，或 enfortumab vedotin＋pembrolizumab；維持治療用 avelumab；後線 FGFR 抑制劑（erdafitinib）。',
+    '尿路上皮癌可多部位發生，需全尿路監測。']},
+  73:{title:'甲狀腺癌（分化型）Thyroid', esmo:ESMO_ENDO, principles:[
+    '分化型（乳突／濾泡）預後佳，以手術為主：依大小／侵犯範圍做甲狀腺全切除或腺葉切除，治療性頸部廓清視轉移而定。',
+    '術後依復發風險選擇性給放射碘（RAI），以 TSH 抑制治療＋thyroglobulin 監測追蹤。',
+    '<b>局部晚期／遠端轉移</b>：RAI 治療；RAI 難治者用 multikinase inhibitor（lenvatinib／sorafenib），或依分子標記（RET／NTRK／BRAF）給選擇性標靶。',
+    '<b>未分化型（anaplastic）</b>高度惡性，策略完全不同（多模式；BRAF V600E 者用 dabrafenib＋trametinib）。']}
+};
+// 治療指引摘要 HTML（僅常見癌別）
+function txHTML(ch){
+  const t=TX[ch]; if(!t)return'';
+  let h=`<div class="tx"><h4>治療指引摘要 — ${esc(t.title)}</h4><ul>`;
+  t.principles.forEach(p=>{h+=`<li>${p}</li>`;});  // principles 已含安全的 <b> 標記，不再 esc
+  h+='</ul><div class="txlinks">'
+    +`<a href="${NCCN_LINK}" target="_blank" rel="noopener">NCCN 治療指引 ↗</a>`
+    +`<a href="${t.esmo}" target="_blank" rel="noopener">ESMO 指引 ↗</a></div>`;
+  h+='<div class="txdis">本摘要為依一般腫瘤學原則自行整理之高階架構，非 NCCN／ESMO 原文，僅供教學與分期對照。實際治療須個別化並以最新原始指引為準。</div>';
+  return h+'</div>';
+}
+
 /* ---------- 渲染 ---------- */
 const listEl=document.getElementById('list');
 const countEl=document.getElementById('count');
 const qEl=document.getElementById('q');
 const partSel=document.getElementById('part');
-let fVer="all", fDetail=false;
+let fVer="all", fDetail=false, fFav=false;
+
+// ---- 收藏（localStorage）/ Favorites persisted in localStorage ----
+const FAV_KEY='ajcc_fav';
+let favSet=new Set();
+try{favSet=new Set(JSON.parse(localStorage.getItem(FAV_KEY)||'[]'));}catch(e){}
+function saveFav(){try{localStorage.setItem(FAV_KEY,JSON.stringify([...favSet]));}catch(e){}}
+function toggleFav(ch){ch=+ch;favSet.has(ch)?favSet.delete(ch):favSet.add(ch);saveFav();}
 
 // 填入部位下拉
 [...new Set(DATA.map(d=>d.part))].forEach(p=>{
@@ -596,9 +812,58 @@ function tbl(title,rows){
   return h+'</table>';
 }
 
-function detailHTML(d){
+// Stage grouping 表（每列加 data-stage-row 供計算器高亮）
+function stageTbl(rows){
+  if(!rows||!rows.length)return'';
+  let h=`<h4>Stage Grouping — 分期分組</h4><table class="stagetbl">`;
+  rows.forEach(([k,v])=>{h+=`<tr data-stage-row="${esc(k)}"><td class="k">${esc(k)}</td><td>${esc(v)}</td></tr>`;});
+  return h+'</table>';
+}
+// 計算器 UI：依 cm.order 產生 T/N/M 下拉
+function buildCalcHTML(ch,cm){
+  const opts=arr=>arr.map(k=>`<option value="${esc(k)}">${esc(k)}</option>`).join('');
+  // M 永遠提供 M0 基準（AJCC 各章 M0＝無遠端轉移；部分章節分類表僅列 M1*，故補上）
+  const mList=cm.order.M.includes('M0')?cm.order.M:['M0',...cm.order.M];
+  return `<div class="calc" data-ch="${ch}">
+    <h4>TNM 分期計算器<span class="calchint">選 T / N / M，自動對照分組</span></h4>
+    <div class="calcrow">
+      <label>T <select class="csel" data-cat="T">${opts(cm.order.T)}</select></label>
+      <label>N <select class="csel" data-cat="N">${opts(cm.order.N)}</select></label>
+      <label>M <select class="csel" data-cat="M">${mList.map(k=>`<option value="${esc(k)}"${k==='M0'?' selected':''}>${esc(k)}</option>`).join('')}</select></label>
+    </div>
+    <div class="calcres">請選擇 T / N / M</div>
+  </div>`;
+}
+// 執行計算：讀取下拉、比對規則、更新結果、高亮分期表對應列
+function runCalc(card){
+  const calc=card.querySelector('.calc'); if(!calc)return;
+  const ch=+calc.dataset.ch, cm=CALC[ch]; if(!cm||!cm.eligible)return;
+  const sel={};
+  calc.querySelectorAll('.csel').forEach(s=>{sel[s.dataset.cat]=s.value;});
+  const res=matchStage(cm.rules,sel);
+  const box=calc.querySelector('.calcres');
+  card.querySelectorAll('.stagetbl tr').forEach(tr=>tr.classList.remove('hlrow'));
+  if(res.length===1){
+    box.className='calcres ok';
+    box.innerHTML=`${esc(sel.T)} / ${esc(sel.N)} / ${esc(sel.M)} → 分期 <b>${esc(res[0])}</b>`;
+    card.querySelectorAll('.stagetbl tr').forEach(tr=>{if(tr.getAttribute('data-stage-row')===res[0])tr.classList.add('hlrow');});
+  }else if(res.length>1){
+    box.className='calcres warn';
+    box.innerHTML=`${esc(sel.T)} / ${esc(sel.N)} / ${esc(sel.M)} → 符合多組（${res.map(esc).join('、')}），請對照下表`;
+  }else{
+    box.className='calcres warn';
+    box.innerHTML=`${esc(sel.T)} / ${esc(sel.N)} / ${esc(sel.M)} → 此組合無對應分期列，請確認輸入或對照下表`;
+  }
+}
+
+function detailHTML(d,ch){
   if(!d)return`<div class="pending"><b>TNM 待補</b>　目前僅提供版本資訊，完整 T/N/M 與 stage grouping 尚未填入。可請我補上這一章。</div>`;
   let h='';
+  // 計算器或不可計算提示置頂
+  const cm=ch!=null?CALC[ch]:null;
+  if(cm&&cm.eligible)h+=buildCalcHTML(ch,cm);
+  else if(cm&&!d.sys&&d.stage&&d.stage.length&&cm.reason!=='no-detail')
+    h+=`<div class="calcna">此章暫不支援自動計算：${esc(cm.reason)}。請直接對照下方分期表。</div>`;
   // 非 TNM 系統（淋巴瘤/骨髓瘤/白血病/GTN 等）以 sys 自訂分區呈現
   if(d.sys){d.sys.forEach(s=>{h+=tbl(s.title,s.rows);});}
   h+=tbl('T — 原發腫瘤',d.T);
@@ -606,8 +871,9 @@ function detailHTML(d){
   h+=tbl('M — 遠端轉移',d.M);
   if(d.S)h+=tbl('S — 血清標記',d.S);
   if(d.G)h+=tbl('G — 組織分級',d.G);
-  h+=tbl('Stage Grouping — 分期分組',d.stage);
+  h+=stageTbl(d.stage);
   if(d.note)h+=`<div class="note">${esc(d.note)}</div>`;
+  if(ch!=null)h+=txHTML(ch);
   return h;
 }
 
@@ -617,6 +883,7 @@ function render(){
   DATA.forEach((d,idx)=>{
     if(fVer!=="all"&&d.ver!==fVer)return;
     if(fDetail&&!d.d)return;
+    if(fFav&&!favSet.has(d.ch))return;
     if(partSel.value!=="all"&&d.part!==partSel.value)return;
     if(q){
       const hay=(d.en+' '+d.zh+' '+d.part+' '+('ch'+d.ch)).toLowerCase();
@@ -628,22 +895,57 @@ function render(){
       ? `<span class="badge b9">9e${d.y?' · '+d.y:''}</span>`
       : `<span class="badge b8">8e</span>`;
     const dflag=d.gen?(d.d?'<span class="hasdetail">● 總論</span>':'') : (d.d?'<span class="hasdetail">● 已填分期</span>':'<span class="nodetail">○ 待補</span>');
-    html+=`<div class="card" data-i="${idx}">
+    const fav=favSet.has(d.ch);
+    const body=d.d?detailHTML(d.d,d.ch):(d.gen?'<div class="note">本章為總論/原則章節，無個別癌症 TNM 分期表。</div>':detailHTML(null));
+    const tools=`<div class="dtools"><button class="copylink" data-ch="${d.ch}">🔗 複製連結</button></div>`;
+    html+=`<div class="card" id="ch${d.ch}" data-i="${idx}" data-ch="${d.ch}">
       <div class="row">
         <span class="ch">${d.ch}</span>
         <span class="name"><span class="en">${hl(d.en,q)}</span> <span class="zh">${hl(d.zh,q)}</span> ${dflag}</span>
         ${badge}
+        <span class="star${fav?' on':''}" data-ch="${d.ch}" title="收藏">${fav?'★':'☆'}</span>
         <span class="arrow">▶</span>
       </div>
-      <div class="detail">${d.d?detailHTML(d.d):(d.gen?'<div class="note">本章為總論/原則章節，無個別癌症 TNM 分期表。</div>':detailHTML(null))}</div>
+      <div class="detail">${body}${tools}</div>
     </div>`;
   });
   listEl.innerHTML=html||`<div class="empty">查無符合條件的項目</div>`;
   countEl.textContent=`顯示 ${n} / ${DATA.length} 章節　·　8e ${DATA.filter(x=>x.ver==='8').length} 章、9e ${DATA.filter(x=>x.ver==='9').length} 章`;
-  // 綁定展開
+  // 綁定展開（點 row 切換，展開時把章節寫進 URL hash 方便書籤/分享）
   listEl.querySelectorAll('.card').forEach(c=>{
-    c.querySelector('.row').onclick=()=>c.classList.toggle('open');
+    c.querySelector('.row').onclick=e=>{
+      if(e.target.classList.contains('star'))return; // 星號自行處理
+      const opened=c.classList.toggle('open');
+      if(opened)history.replaceState(null,'','#ch'+c.dataset.ch);
+    };
+    // 計算器：下拉變更時即時計算
+    const calc=c.querySelector('.calc');
+    if(calc){calc.querySelectorAll('.csel').forEach(s=>s.onchange=()=>runCalc(c));runCalc(c);}
   });
+  // 收藏星號
+  listEl.querySelectorAll('.star').forEach(s=>{
+    s.onclick=e=>{e.stopPropagation();toggleFav(s.dataset.ch);render();};
+  });
+  // 複製連結
+  listEl.querySelectorAll('.copylink').forEach(b=>{
+    b.onclick=async e=>{
+      e.stopPropagation();
+      const url=location.origin+location.pathname+'#ch'+b.dataset.ch;
+      try{await navigator.clipboard.writeText(url);}catch(_){
+        const t=document.createElement('textarea');t.value=url;document.body.appendChild(t);t.select();document.execCommand('copy');t.remove();
+      }
+      const o=b.textContent;b.textContent='✓ 已複製';b.classList.add('ok');
+      setTimeout(()=>{b.textContent=o;b.classList.remove('ok');},1400);
+    };
+  });
+}
+
+// 依 URL hash (#chNN) 展開並捲動到該章節
+function openFromHash(){
+  const m=(location.hash||'').match(/^#ch(\d+)$/);
+  if(!m)return;
+  const card=document.getElementById('ch'+m[1]);
+  if(card){card.classList.add('open');if(card.scrollIntoView)card.scrollIntoView({behavior:'smooth',block:'center'});}
 }
 
 qEl.oninput=render;
@@ -657,7 +959,30 @@ document.querySelectorAll('.chip[data-ver]').forEach(ch=>{
 document.querySelector('.chip[data-detail]').onclick=function(){
   fDetail=!fDetail;this.classList.toggle('active',fDetail);render();
 };
+document.querySelector('.chip[data-fav]').onclick=function(){
+  fFav=!fFav;this.classList.toggle('active',fFav);render();
+};
+
+// 鍵盤快捷：「/」聚焦搜尋、Esc 清除/失焦
+document.addEventListener('keydown',e=>{
+  const inField=/^(INPUT|TEXTAREA|SELECT)$/.test(document.activeElement.tagName);
+  if(e.key==='/'&&!inField){e.preventDefault();qEl.focus();qEl.select();}
+  else if(e.key==='Escape'){
+    if(qEl.value){qEl.value='';render();}
+    qEl.blur();
+  }
+});
+
+window.addEventListener('hashchange',openFromHash);
 render();
+openFromHash();
+
+// 註冊 service worker（離線支援）。file:// 開啟時 SW 不可用，靜默略過。
+if('serviceWorker' in navigator && location.protocol.startsWith('http')){
+  window.addEventListener('load',()=>{
+    navigator.serviceWorker.register('sw.js').catch(()=>{});
+  });
+}
 </script>
 </body>
 </html>
