@@ -309,7 +309,12 @@ const DATA = [
   M:[["M1a (IVA)","胸水細胞學陽性"],["M1b (IVB)","肝/脾實質、腹腔外器官、鼠蹊或腹腔外淋巴結"]],
   stage:[["IA/IB/IC","T1a / T1b / T1c N0"],["IIA/IIB","T2a / T2b N0"],["IIIA1","N1（僅後腹腔淋巴結）"],["IIIA2","T3a N0–1"],["IIIB","T3b N0–1"],["IIIC","T3c N0–1"],["IVA","M1a"],["IVB","M1b"]],
   note:"對應 FIGO 2014。"}},
-{ch:56,part:"XII. 女性生殖 Female Repro",en:"Gestational Trophoblastic Neoplasm",zh:"妊娠滋養細胞瘤",ver:"8",d:null},
+{ch:56,part:"XII. 女性生殖 Female Repro",en:"Gestational Trophoblastic Neoplasm",zh:"妊娠滋養細胞瘤",ver:"8",d:{
+  sys:[
+    {title:"FIGO 解剖分期",rows:[["I","侷限於子宮"],["II","延伸至子宮外，但限於生殖構造（附件/陰道/闊韌帶）"],["III","延伸至肺，±生殖道侵犯"],["IV","其他所有轉移部位（腦/肝/腎/腸胃道）"]]},
+    {title:"WHO/FIGO 修訂預後評分（每項 0/1/2/4）",rows:[["年齡","<40 → 0；≥40 → 1"],["前次妊娠","葡萄胎 0；流產 1；足月 2"],["距前次妊娠月數","<4 →0；4–6 →1；7–12 →2；>12 →4"],["治療前 hCG (IU/L)","<10³ →0；10³–10⁴ →1；10⁴–10⁵ →2；>10⁵ →4"],["最大腫瘤 (含子宮)","<3cm →0；3–5cm →1；>5cm →2"],["轉移部位","肺 0；脾/腎 1；腸胃道 2；腦/肝 4"],["轉移數目","0；1–4 →1；5–8 →2；>8 →4"],["先前化療失敗","無 0；單藥 2；≥2 藥 4"]]},
+    {title:"風險分層（總分）",rows:[["低風險","≤6"],["高風險","≥7"]]}],
+  note:"GTN 採 FIGO 解剖分期＋WHO 預後評分（非 TNM）。分期與評分以「分期:評分」表示（如 III:7）。風險決定單藥 vs. 多藥化療。"}},
 
 /* Part XIII Male Genital */
 {ch:57,part:"XIII. 男性生殖 Male Genital",en:"Penis",zh:"陰莖",ver:"8",d:{
@@ -429,11 +434,31 @@ const DATA = [
 
 /* Part XVIII Hematologic */
 {ch:78,part:"XVIII. 血液 Hematologic",en:"Introduction to Hematologic Malignancies",zh:"血液惡性腫瘤總論",ver:"8",gen:1,d:null},
-{ch:79,part:"XVIII. 血液 Hematologic",en:"Hodgkin and Non-Hodgkin Lymphomas",zh:"何杰金與非何杰金淋巴瘤",ver:"8",d:null},
-{ch:80,part:"XVIII. 血液 Hematologic",en:"Pediatric Hodgkin & Non-Hodgkin Lymphoma",zh:"兒童淋巴瘤",ver:"8",d:null},
-{ch:81,part:"XVIII. 血液 Hematologic",en:"Primary Cutaneous Lymphomas",zh:"原發皮膚淋巴瘤",ver:"8",d:null},
-{ch:82,part:"XVIII. 血液 Hematologic",en:"Plasma Cell Myeloma & Plasma Cell Disorders",zh:"漿細胞骨髓瘤與漿細胞疾病",ver:"8",d:null},
-{ch:83,part:"XVIII. 血液 Hematologic",en:"Leukemia",zh:"白血病",ver:"8",d:null}
+{ch:79,part:"XVIII. 血液 Hematologic",en:"Hodgkin and Non-Hodgkin Lymphomas",zh:"何杰金與非何杰金淋巴瘤",ver:"8",d:{
+  sys:[
+    {title:"Lugano 分期（Ann Arbor 修訂）",rows:[["I","單一淋巴結區或單一淋巴結構（脾/胸腺/Waldeyer 環）；或單一結外部位(IE)"],["II","橫膈同側 ≥2 淋巴結區；或 I/II 期合併鄰近局限結外侵犯(IIE)"],["II bulky","II 期合併 bulky disease"],["III","橫膈兩側淋巴結；或橫膈上淋巴結＋脾"],["IV","≥1 結外器官瀰漫/散播性侵犯（非鄰近）"]]},
+    {title:"A / B 症狀（主要用於 Hodgkin）",rows:[["A","無 B 症狀"],["B","發燒 >38°C、盜汗、6 個月內體重減輕 >10%"]]}],
+  note:"AJCC 採用 Lugano classification，非 TNM。Bulky 定義依組織型態而異。"}},
+{ch:80,part:"XVIII. 血液 Hematologic",en:"Pediatric Hodgkin & Non-Hodgkin Lymphoma",zh:"兒童淋巴瘤",ver:"8",d:{
+  sys:[
+    {title:"St. Jude / Murphy 分期（兒童 NHL）",rows:[["I","單一結外腫瘤或單一淋巴結區（縱膈與腹部除外）"],["II","單一結外＋區域淋巴結；橫膈同側 ≥2 區；可切除之原發腸胃道腫瘤±腸繫膜淋巴結"],["III","橫膈兩側；所有原發胸內病灶；廣泛不可切除腹腔病灶；脊椎旁/硬膜外"],["IV","中樞神經和/或骨髓侵犯"]]}],
+  note:"兒童 NHL 用 St. Jude/Murphy（或 IPNHLSS）；兒童 Hodgkin 用修訂 Ann Arbor。"}},
+{ch:81,part:"XVIII. 血液 Hematologic",en:"Primary Cutaneous Lymphomas",zh:"原發皮膚淋巴瘤",ver:"8",d:{
+  sys:[
+    {title:"T — 皮膚（MF / Sézary）",rows:[["T1","斑塊/丘疹 <10% 體表"],["T2","斑塊/丘疹 ≥10% 體表"],["T3","≥1 個腫瘤（≥1cm）"],["T4","紅皮症 ≥80% 體表"]]},
+    {title:"N / M / B",rows:[["N0–N3","淋巴結：N0 無；N1–N2 異常但結構未消失；N3 結構消失"],["M0 / M1","內臟侵犯"],["B0–B2","血液腫瘤負荷（B2＝高負荷/Sézary 細胞）"]]},
+    {title:"Stage",rows:[["IA","T1 N0"],["IB","T2 N0"],["II","T1–2 N1–2"],["IIB","T3"],["III","T4（紅皮症）"],["IVA1","B2"],["IVA2","N3"],["IVB","M1（內臟）"]]}],
+  note:"ISCL/EORTC TNMB 分期，適用 Mycosis Fungoides / Sézary syndrome。"}},
+{ch:82,part:"XVIII. 血液 Hematologic",en:"Plasma Cell Myeloma & Plasma Cell Disorders",zh:"漿細胞骨髓瘤與漿細胞疾病",ver:"8",d:{
+  sys:[
+    {title:"ISS（基礎）",rows:[["I","β2-microglobulin <3.5 mg/L 且 albumin ≥3.5 g/dL"],["II","非 I 非 III"],["III","β2-microglobulin ≥5.5 mg/L"]]},
+    {title:"R-ISS（修訂，加 cytogenetics + LDH）",rows:[["I","ISS I ＋標準風險細胞遺傳 ＋正常 LDH"],["II","非 I 非 III"],["III","ISS III ＋（高風險細胞遺傳 或 LDH 升高）"]]}],
+  note:"高風險 cytogenetics＝del(17p)、t(4;14)、t(14;16)（FISH）。R-ISS 為現行標準。"}},
+{ch:83,part:"XVIII. 血液 Hematologic",en:"Leukemia",zh:"白血病",ver:"8",d:{
+  sys:[
+    {title:"Rai 分期（CLL）",rows:[["0","僅淋巴球增多"],["I","＋淋巴結腫大"],["II","＋脾/肝腫大"],["III","＋貧血 Hb <11 g/dL"],["IV","＋血小板 <100k"]]},
+    {title:"Binet 分期（CLL）",rows:[["A","<3 個淋巴區，無貧血/血小板低下"],["B","≥3 個淋巴區"],["C","貧血或血小板低下"]]}],
+  note:"白血病無 TNM 解剖分期，依 WHO 分類。CLL 臨床用 Rai/Binet；急性白血病以 WHO/分子分型，不分期。"}}
 ];
 
 /* ---------- 渲染 ---------- */
@@ -464,6 +489,8 @@ function tbl(title,rows){
 function detailHTML(d){
   if(!d)return`<div class="pending"><b>TNM 待補</b>　目前僅提供版本資訊，完整 T/N/M 與 stage grouping 尚未填入。可請我補上這一章。</div>`;
   let h='';
+  // 非 TNM 系統（淋巴瘤/骨髓瘤/白血病/GTN 等）以 sys 自訂分區呈現
+  if(d.sys){d.sys.forEach(s=>{h+=tbl(s.title,s.rows);});}
   h+=tbl('T — 原發腫瘤',d.T);
   h+=tbl('N — 區域淋巴結',d.N);
   h+=tbl('M — 遠端轉移',d.M);
