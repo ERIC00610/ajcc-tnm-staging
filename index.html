@@ -70,7 +70,7 @@
     <div class="chip active" data-ver="all">全部</div>
     <div class="chip" data-ver="8">僅 8e</div>
     <div class="chip" data-ver="9">僅 9e</div>
-    <div class="chip" data-detail="1">只看已填 TNM</div>
+    <div class="chip" data-detail="1">只看已填分期</div>
     <select id="part"><option value="all">所有部位系統</option></select>
   </div>
 </header>
@@ -106,14 +106,24 @@ const DATA = [
   T:[["Tis","原位癌"],["T1","≤2cm 且 DOI ≤5mm"],["T2","≤2cm 且 DOI >5–10mm，或 >2–4cm 且 DOI ≤10mm"],["T3",">4cm，或任何 DOI >10mm"],["T4a","中度晚期：侵 mandible/maxilla 皮質骨、上頜竇、臉部皮膚"],["T4b","非常晚期：masticator space、pterygoid plates、顱底、包覆 ICA"]],
   N:HN_N,M:HN_M,stage:HN_STAGE,
   note:"8e 重點：T 納入 DOI（depth of invasion）、N 納入 ENE。"}},
-{ch:8,part:"II. 頭頸 Head & Neck",en:"Major Salivary Glands",zh:"大唾液腺",ver:"9",y:2026,d:null},
+{ch:8,part:"II. 頭頸 Head & Neck",en:"Major Salivary Glands",zh:"大唾液腺",ver:"9",y:2026,d:{
+  T:[["T1","≤2cm，無腺外侵犯"],["T2",">2–4cm，無腺外侵犯"],["T3",">4cm 和/或腺外侵犯"],["T4a","中度進展：侵皮膚/下頷骨/耳道/顏面神經"],["T4b","極度進展：侵顱底/翼板，或包覆頸動脈"]],
+  N:[["N0","無淋巴結病灶"],["N1","1–3 顆，無 ENE"],["N2",">3 顆，或任何 ENE（含影像 iENE）"]],
+  M:[["M0","無"],["M1","遠端轉移"]],
+  stage:[["I","T1 N0"],["II","T2 N0"],["III","T3 N0；T1–3 N1"],["IVA","T4a／N2 等局部區域進展"],["IV(M1)","Stage IV 僅保留給遠端轉移"]],
+  note:"v9 首個涵蓋大/小唾液腺之統一系統。N 簡化為以淋巴結數目與 ENE 為準（cTNM 採影像 iENE）。重大改變：Stage IV 僅限 M1。完整 stage grouping 請對照 AJCC v9 原文。2026/1/1 起生效。"}},
 {ch:9,part:"II. 頭頸 Head & Neck",en:"Nasopharynx",zh:"鼻咽",ver:"9",y:2025,d:{
   T:[["T0","無原發腫瘤，EBV(+) 頸部淋巴結"],["T1","侷限鼻咽，或延伸至口咽/鼻腔，無咽旁侵犯"],["T2","咽旁侵犯；或鄰近軟組織（內/外翼肌、椎前肌）"],["T3","骨結構（顱底、頸椎）或鼻竇；需明確皮質骨破壞或骨髓浸潤"],["T4","顱內延伸、顱神經、下咽、眼眶、腮腺；或侵超過外翼肌外緣之廣泛軟組織"]],
   N:[["N0","無"],["N1","單側頸部和/或單/雙側咽後淋巴結，≤6cm，位於環狀軟骨下緣以上"],["N2","雙側頸部 ≤6cm，環狀軟骨下緣以上"],["N3",">6cm 和/或低於環狀軟骨下緣；或影像明確 advanced ENE"]],
   M:[["M0","無"],["M1a","≤3 個轉移病灶"],["M1b",">3 個轉移病灶"]],
   stage:[["I","T1 N0"],["II","T0–1 N1；T2 N0–1"],["III","T0–2 N2；T3 N0–2"],["IVA","T4 any N；any T N3"],["IVB","any M1"]],
   note:"v9 主要變動：N3 納入影像 advanced ENE；T3 需明確皮質骨破壞/骨髓浸潤；T4 納入超過外翼肌外緣之侵犯；M1 細分 M1a(≤3)/M1b(>3)。"}},
-{ch:10,part:"II. 頭頸 Head & Neck",en:"HPV-Mediated (p16+) Oropharynx",zh:"HPV相關(p16+)口咽",ver:"9",y:2026,d:null},
+{ch:10,part:"II. 頭頸 Head & Neck",en:"HPV-Mediated (p16+) Oropharynx",zh:"HPV相關(p16+)口咽",ver:"9",y:2026,d:{
+  T:[["T0","無原發腫瘤（HPV(+) 頸部淋巴結）"],["T1","≤2cm"],["T2",">2–4cm"],["T3",">4cm 或延伸至會厭舌面"],["T4","侵喉、舌深部/外在肌、內翼肌、硬腭、下頷骨或更深"]],
+  N:[["cN1","同側淋巴結 ≤6cm"],["cN2","對側/雙側 ≤6cm"],["cN3",">6cm"],["pN1","病理 ≤4 顆陽性淋巴結"],["pN2","病理 ≥5 顆陽性淋巴結"]],
+  M:[["M0","無"],["M1","遠端轉移"]],
+  stage:[["臨床 I","T0–2 N0–1"],["臨床 II","T0–2 N2；T3 N0–2"],["臨床 III","T4 any N；any T N3"],["臨床 IV","any M1"],["病理 I","T0–2 N0–1"],["病理 II","T0–2 N2；T3–4 N0–1"],["病理 III","T3–4 N2"],["病理 IV","any M1"]],
+  note:"p16(+) 口咽分臨床與病理兩套 N/stage。v9 病理 N 以淋巴結數 ≤4 vs ≥5 為界（ENE 在 HPV 相關不具預後意義，不納入分期）。2026/1/1 起生效。"}},
 {ch:11,part:"II. 頭頸 Head & Neck",en:"Oropharynx (p16-) & Hypopharynx",zh:"口咽(p16-)與下咽",ver:"8",d:{
   T:[["【口咽 p16(−)】",""],["T1","≤2cm"],["T2",">2–4cm"],["T3",">4cm 或延伸至會厭舌面"],["T4a","侵喉、舌深部肌肉、medial pterygoid、硬腭、下頜骨"],["T4b","侵 lateral pterygoid、pterygoid plates、側鼻咽、顱底、包覆 ICA"],["【下咽】",""],["T1","侷限單一 subsite 且 ≤2cm"],["T2",">一 subsite 或 >2–4cm，無半喉固定"],["T3",">4cm 或半喉固定或食道黏膜延伸"],["T4a","侵 thyroid/cricoid 軟骨、舌骨、甲狀腺、食道肌肉、中央區軟組織"],["T4b","侵 prevertebral fascia、包覆頸動脈、縱膈結構"]],
   N:HN_N,M:HN_M,stage:HN_STAGE,
@@ -256,14 +266,24 @@ const DATA = [
   note:"v9 對 pNET 之 T/N/M 無變動；新增 ALT 狀態、ATRX 缺失等預後標記討論。WHO 將 G3 NET 與低分化 NEC 分開。"}},
 
 /* Part VII Thorax */
-{ch:35,part:"VII. 胸腔 Thorax",en:"Thymus",zh:"胸腺",ver:"9",y:2025,d:null},
+{ch:35,part:"VII. 胸腔 Thorax",en:"Thymus",zh:"胸腺",ver:"9",y:2025,d:{
+  T:[["T1a","包膜內或侵入縱膈脂肪，≤5cm"],["T1b","同上但 >5cm"],["T2","直接侵犯心包、肺或膈神經"],["T3","侵 brachiocephalic vein/SVC/胸壁/心包外肺動靜脈"],["T4","侵主動脈/弓上血管/心包內肺動脈/心肌/氣管/食道"]],
+  N:[["N0","無"],["N1","前縱膈(perithymic)淋巴結"],["N2","深部胸內或頸部淋巴結"]],
+  M:[["M0","無"],["M1a","肋膜或心包結節"],["M1b","肺實質內結節或遠端器官轉移"]],
+  stage:[["I","T1 N0 M0"],["II","T2 N0 M0"],["IIIA","T3 N0 M0"],["IIIB","T4 N0 M0"],["IVA","any T N1 M0；M1a"],["IVB","any T N2；M1b"]],
+  note:"v9 主要變動：T1 納入大小(T1a ≤5cm/T1b >5cm)；縱膈肋膜不再作 T 描述子；肺/膈神經侵犯由 T3 改列 T2。N、M 沿用 8e。"}},
 {ch:36,part:"VII. 胸腔 Thorax",en:"Lung",zh:"肺",ver:"9",y:2025,d:{
   T:[["T1","≤3cm，被肺/臟層肋膜包圍（T1mi 微浸潤腺癌；T1a ≤1；T1b >1–2；T1c >2–3）"],["T2",">3–5cm；或侵主支氣管(未及隆突)、臟層肋膜；或肺不張至肺門（T2a >3–4；T2b >4–5）"],["T3",">5–7cm；或侵胸壁/膈神經/壁層心包；或同葉衛星結節"],["T4",">7cm；或侵膈/縱膈/心臟/大血管/氣管/隆突/食道/椎體/喉返神經；或同側不同葉結節"]],
   N:[["N0","無"],["N1","同側肺門/支氣管周圍/肺內"],["N2a","單一同側縱膈或隆突下淋巴結站"],["N2b","多個縱膈或隆突下淋巴結站"],["N3","對側縱膈/肺門；斜角肌/鎖骨上"]],
   M:[["M0","無"],["M1a","對側肺結節；肋膜/心包結節或惡性積液"],["M1b","單一肺外轉移"],["M1c1","單一器官系統之多處肺外轉移"],["M1c2","多個器官系統之肺外轉移"]],
   stage:[["IA1","T1mi/T1a N0"],["IA2","T1b N0"],["IA3","T1c N0"],["IB","T2a N0"],["IIA","T2b N0；T1 N1"],["IIB","T1 N2a；T2 N1；T3 N0"],["IIIA","T1–2 N2b；T3 N1–2a；T4 N0–1"],["IIIB","T1–2 N3；T3–4 N2b；T4 N2a"],["IIIC","T3–4 N3"],["IVA","any M1a/M1b"],["IVB","any M1c"]],
   note:"v9 主要變動：N2 細分 N2a(單站)/N2b(多站)；M1c 細分 M1c1/M1c2。T 分類不變。分期重排：T1N1→IIA、T1N2a→IIB、T3N2a→IIIA、T2N2b→IIIB。"}},
-{ch:37,part:"VII. 胸腔 Thorax",en:"Pleural Mesothelioma",zh:"肋膜間皮瘤",ver:"9",y:2025,d:null},
+{ch:37,part:"VII. 胸腔 Thorax",en:"Pleural Mesothelioma",zh:"肋膜間皮瘤",ver:"9",y:2025,d:{
+  T:[["T1","同側壁層肋膜 ±臟層/縱膈/橫膈肋膜"],["T2","＋橫膈肌肉或肺實質"],["T3","局部進展（可能可切除）：＋內胸筋膜/縱膈脂肪/胸壁單一病灶/非全層心包"],["T4","不可切除：瀰漫胸壁、腹膜、對側肋膜、縱膈器官、脊椎、全層心包/心肌"]],
+  N:[["N0","無"],["N1","同側胸內淋巴結（含內乳、橫膈周圍）"],["N2","對側縱膈、同/對側鎖骨上"]],
+  M:[["M0","無"],["M1","遠端轉移"]],
+  stage:[["IA","T1 N0"],["IB","T2–3 N0"],["II","T1–2 N1"],["IIIA","T3 N1"],["IIIB","T1–3 N2；T4 any N"],["IV","any M1"]],
+  note:"以 8e 架構為基礎；v9 (2025/1/1 生效) 納入肋膜厚度測量等新資料元素以精修分類。確切 cutoff 請對照 AJCC v9 原文。"}},
 
 /* Part VIII Bone */
 {ch:38,part:"VIII. 骨 Bone",en:"Bone",zh:"骨",ver:"8",d:{
@@ -330,7 +350,12 @@ const DATA = [
 
 /* Part XII Female Reproductive */
 {ch:49,part:"XII. 女性生殖 Female Repro",en:"Introduction to Female Reproductive Organs",zh:"女性生殖器官總論",ver:"8",gen:1,d:null},
-{ch:50,part:"XII. 女性生殖 Female Repro",en:"Vulva",zh:"外陰",ver:"9",y:2024,d:null},
+{ch:50,part:"XII. 女性生殖 Female Repro",en:"Vulva",zh:"外陰",ver:"9",y:2024,d:{
+  T:[["T1a","≤2cm 且間質浸潤 ≤1mm，侷限外陰/會陰"],["T1b",">2cm 或間質浸潤 >1mm，侷限外陰/會陰"],["T2","任何大小，延伸至下 1/3 尿道、下 1/3 陰道或下 1/3 肛門"],["T3","延伸至上 2/3 尿道/陰道、膀胱/直腸黏膜，或固著於骨盆骨"]],
+  N:[["N0","無"],["N1a","1–2 顆 <5mm"],["N1b","1 顆 ≥5mm"],["N2a","≥3 顆 <5mm"],["N2b","≥2 顆 ≥5mm"],["N2c","ENE（包膜外侵犯）"],["N3","固著或潰瘍性淋巴結"]],
+  M:[["M0","無"],["M1","遠端轉移（含骨盆淋巴結）"]],
+  stage:[["IA","T1a N0（FIGO IA）"],["IB","T1b N0（FIGO IB）"],["II","T2 N0（FIGO II）"],["IIIA","N1（FIGO IIIA）"],["IIIB","N2a–b（FIGO IIIB）"],["IIIC","N2c/ENE（FIGO IIIC）"],["IVA","T3 any N；N3（FIGO IVA）"],["IVB","any M1（FIGO IVB）"]],
+  note:"v9 (2024/1/1 生效) 對齊 FIGO 2021 修訂版。鼠蹊與股淋巴結為區域淋巴結。淋巴結大小(5mm)與 ENE 為分期關鍵。"}},
 {ch:51,part:"XII. 女性生殖 Female Repro",en:"Vagina",zh:"陰道",ver:"8",d:{
   T:[["Tis","原位癌"],["T1 (I)","侷限陰道"],["T2 (II)","侵 paravaginal 組織，未及骨盆壁"],["T3 (III)","及骨盆壁"],["T4 (IVA)","侵膀胱/直腸黏膜或超出真骨盆"]],
   N:[["N0","無"],["N1","骨盆或腹股溝淋巴結"]],
@@ -448,7 +473,12 @@ const DATA = [
   note:"屬淋巴瘤，臨床常同時用 Ann Arbor/Lugano 系統評估。"}},
 
 /* Part XVI CNS */
-{ch:72,part:"XVI. 中樞神經 CNS",en:"Brain and Spinal Cord",zh:"腦與脊髓",ver:"9",y:2023,d:null},
+{ch:72,part:"XVI. 中樞神經 CNS",en:"Brain and Spinal Cord",zh:"腦與脊髓",ver:"9",y:2023,d:{
+  sys:[
+    {title:"分期原則（無傳統 TNM 解剖分期）",rows:[["無 T/N/M","CNS 原發腫瘤不使用 T/N/M 也無 anatomic stage group"],["預後依據","WHO CNS 腫瘤分類之組織型＋WHO grade(1–4)＋分子標記"]]},
+    {title:"WHO Grade（CNS5, 2021）",rows:[["Grade 1","低增殖、可能手術治癒（如 pilocytic astrocytoma）"],["Grade 2","浸潤性、低度惡性"],["Grade 3","退行性(anaplastic)"],["Grade 4","高度惡性（如 glioblastoma；IDH-wildtype）"]]},
+    {title:"關鍵分子標記",rows:[["瀰漫性膠質瘤","IDH 突變狀態、1p/19q codeletion（少突膠質瘤）、ATRX、CDKN2A/B"],["其他","H3 K27M（瀰漫中線膠質瘤）、MGMT 啟動子甲基化（預測 temozolomide 反應）"]]}],
+  note:"AJCC v9 (2023/1/1 生效) 採流線化格式並納入 WHO 組織碼。CNS 腫瘤以 WHO 分類/grade/分子分型決定預後，非 TNM。"}},
 
 /* Part XVII Endocrine */
 {ch:73,part:"XVII. 內分泌 Endocrine",en:"Thyroid — Differentiated & Anaplastic",zh:"甲狀腺（分化型與未分化型）",ver:"8",d:{
@@ -567,7 +597,7 @@ function render(){
     const badge=d.ver==="9"
       ? `<span class="badge b9">9e${d.y?' · '+d.y:''}</span>`
       : `<span class="badge b8">8e</span>`;
-    const dflag=d.gen?'' : (d.d?'<span class="hasdetail">● 已填 TNM</span>':'<span class="nodetail">○ 待補</span>');
+    const dflag=d.gen?'' : (d.d?'<span class="hasdetail">● 已填分期</span>':'<span class="nodetail">○ 待補</span>');
     html+=`<div class="card" data-i="${idx}">
       <div class="row">
         <span class="ch">${d.ch}</span>
@@ -575,7 +605,7 @@ function render(){
         ${badge}
         <span class="arrow">▶</span>
       </div>
-      <div class="detail">${detailHTML(d.d)}</div>
+      <div class="detail">${d.gen?'<div class="note">本章為總論/原則章節，無個別癌症 TNM 分期表。</div>':detailHTML(d.d)}</div>
     </div>`;
   });
   listEl.innerHTML=html||`<div class="empty">查無符合條件的項目</div>`;
