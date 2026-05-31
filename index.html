@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AJCC TNM 查詢表（8e / 9e 對照）</title>
+<style>
+  :root{
+    --bg:#0f1419; --panel:#161b22; --panel2:#1c232c; --border:#2b3441;
+    --txt:#e6edf3; --muted:#8b98a5; --accent:#4493f8;
+    --v8:#5b6b7d; --v8bg:#1d2630; --v9:#2ea043; --v9bg:#11271a;
+    --chipbg:#21262d; --hl:#fff3b0;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:-apple-system,"PingFang TC","Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    background:var(--bg);color:var(--txt);line-height:1.5;font-size:15px}
+  header{position:sticky;top:0;z-index:20;background:var(--panel);
+    border-bottom:1px solid var(--border);padding:14px 18px 10px}
+  h1{margin:0 0 2px;font-size:19px;letter-spacing:.3px}
+  .sub{color:var(--muted);font-size:12.5px;margin-bottom:10px}
+  .controls{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+  #q{flex:1 1 260px;min-width:200px;background:var(--panel2);border:1px solid var(--border);
+    color:var(--txt);padding:9px 12px;border-radius:8px;font-size:15px;outline:none}
+  #q:focus{border-color:var(--accent)}
+  select,.chip{background:var(--chipbg);border:1px solid var(--border);color:var(--txt);
+    padding:8px 12px;border-radius:8px;font-size:13.5px;cursor:pointer}
+  .chip.active{background:var(--accent);border-color:var(--accent);color:#001321;font-weight:600}
+  .count{color:var(--muted);font-size:12.5px;margin:10px 18px 0}
+  main{padding:6px 14px 60px;max-width:980px;margin:0 auto}
+  .part{margin:18px 0 6px;color:var(--muted);font-size:12px;font-weight:600;
+    text-transform:uppercase;letter-spacing:.6px;border-bottom:1px solid var(--border);padding-bottom:4px}
+  .card{background:var(--panel);border:1px solid var(--border);border-radius:10px;
+    margin:7px 0;overflow:hidden}
+  .row{display:flex;align-items:center;gap:10px;padding:11px 14px;cursor:pointer;user-select:none}
+  .row:hover{background:var(--panel2)}
+  .ch{color:var(--muted);font-size:12px;font-variant-numeric:tabular-nums;min-width:24px;text-align:right}
+  .name{flex:1;min-width:0}
+  .name .en{font-weight:600}
+  .name .zh{color:var(--muted);font-size:12.5px}
+  .badge{font-size:11.5px;font-weight:700;padding:3px 9px;border-radius:20px;white-space:nowrap}
+  .b8{color:#c3d3e3;background:var(--v8bg);border:1px solid var(--v8)}
+  .b9{color:#7ee2a0;background:var(--v9bg);border:1px solid var(--v9)}
+  .hasdetail{font-size:11px;color:var(--v9);margin-left:2px}
+  .nodetail{font-size:11px;color:#6b7682;margin-left:2px}
+  .arrow{color:var(--muted);transition:transform .15s;font-size:12px}
+  .open .arrow{transform:rotate(90deg)}
+  .detail{display:none;padding:4px 16px 16px;border-top:1px solid var(--border);background:var(--panel2)}
+  .open .detail{display:block}
+  .detail h4{margin:14px 0 6px;font-size:13px;color:var(--accent);letter-spacing:.4px}
+  .detail table{width:100%;border-collapse:collapse;font-size:13px;margin-top:2px}
+  .detail td{border:1px solid var(--border);padding:6px 9px;vertical-align:top}
+  .detail td.k{white-space:nowrap;font-weight:700;color:#9fd0ff;width:1%;font-variant-numeric:tabular-nums}
+  .note{margin-top:12px;font-size:12.5px;color:var(--muted);background:#1a1f27;
+    border-left:3px solid var(--v8);padding:8px 11px;border-radius:0 6px 6px 0}
+  .pending{color:var(--muted);font-size:13px;padding:10px 2px}
+  .pending b{color:#c9a227}
+  mark{background:var(--hl);color:#000;border-radius:2px;padding:0 1px}
+  .disclaimer{background:#2a1f12;border:1px solid #5c4318;color:#e8d5a8;
+    font-size:12px;padding:9px 18px;text-align:center}
+  .empty{text-align:center;color:var(--muted);padding:40px 0}
+  a{color:var(--accent)}
+</style>
+</head>
+<body>
+<header>
+  <h1>AJCC TNM 查詢表</h1>
+  <div class="sub">8th Edition 與 Version 9 混用對照 · 資料依 AJCC Current Staging System (2026)</div>
+  <div class="controls">
+    <input id="q" placeholder="輸入癌症名稱搜尋（中／英），例：lung、乳癌、bone、prostate…" autocomplete="off">
+    <div class="chip active" data-ver="all">全部</div>
+    <div class="chip" data-ver="8">僅 8e</div>
+    <div class="chip" data-ver="9">僅 9e</div>
+    <div class="chip" data-detail="1">只看已填 TNM</div>
+    <select id="part"><option value="all">所有部位系統</option></select>
+  </div>
+</header>
+<div class="disclaimer">本表 TNM 內容供快速查詢與教學參考，臨床分期決策請對照 AJCC 原書 / UpToDate。標示「TNM 待補」者目前僅提供版本資訊。</div>
+<div class="count" id="count"></div>
+<main id="list"></main>
+
+<script>
+/* ---- 資料：全部 83 章節版本對照（100% 來自附檔）＋ 高分癌症完整 8e/9e TNM ----
+   ver: "8" 或 "9"；y: v9 年份；d: 詳情物件或 null
+   d = { T:[[key,val]...], N:[...], M:[...], S:[...]?, G:[...]?, stage:[[key,val]...], note:"" } */
+const DATA = [
+/* Part I */
+{ch:1,part:"I. 一般原則 General",en:"Principles of Cancer Staging",zh:"癌症分期原則",ver:"8",gen:1,d:null},
+{ch:2,part:"I. 一般原則 General",en:"Organization of AJCC Manual",zh:"AJCC 手冊架構",ver:"8",gen:1,d:null},
+{ch:3,part:"I. 一般原則 General",en:"Cancer Survival Analysis",zh:"癌症存活分析",ver:"8",gen:1,d:null},
+{ch:4,part:"I. 一般原則 General",en:"Risk Models for Individualized Prognosis",zh:"個別化預後風險模型",ver:"8",gen:1,d:null},
+
+/* Part II Head & Neck */
+{ch:5,part:"II. 頭頸 Head & Neck",en:"Staging Head and Neck Cancers",zh:"頭頸癌分期總論",ver:"8",gen:1,d:null},
+{ch:6,part:"II. 頭頸 Head & Neck",en:"Cervical Nodes & Unknown Primary",zh:"頸部淋巴結與不明原發",ver:"8",d:null},
+{ch:7,part:"II. 頭頸 Head & Neck",en:"Oral Cavity",zh:"口腔",ver:"8",d:null},
+{ch:8,part:"II. 頭頸 Head & Neck",en:"Major Salivary Glands",zh:"大唾液腺",ver:"9",y:2026,d:null},
+{ch:9,part:"II. 頭頸 Head & Neck",en:"Nasopharynx",zh:"鼻咽",ver:"9",y:2025,d:null},
+{ch:10,part:"II. 頭頸 Head & Neck",en:"HPV-Mediated (p16+) Oropharynx",zh:"HPV相關(p16+)口咽",ver:"9",y:2026,d:null},
+{ch:11,part:"II. 頭頸 Head & Neck",en:"Oropharynx (p16-) & Hypopharynx",zh:"口咽(p16-)與下咽",ver:"8",d:null},
+{ch:12,part:"II. 頭頸 Head & Neck",en:"Nasal Cavity & Paranasal Sinuses",zh:"鼻腔與副鼻竇",ver:"8",d:null},
+{ch:13,part:"II. 頭頸 Head & Neck",en:"Larynx",zh:"喉",ver:"8",d:null},
+{ch:14,part:"II. 頭頸 Head & Neck",en:"Mucosal Melanoma of Head & Neck",zh:"頭頸黏膜黑色素瘤",ver:"8",d:null},
+{ch:15,part:"II. 頭頸 Head & Neck",en:"Cutaneous Ca of Head & Neck",zh:"頭頸皮膚癌",ver:"8",d:null},
+
+/* Part III Upper GI */
+{ch:16,part:"III. 上消化道 Upper GI",en:"Esophagus & Esophagogastric Junction",zh:"食道與胃食道交界",ver:"8",d:{
+  T:[["Tis","High-grade dysplasia"],["T1","侵犯 lamina propria / muscularis mucosae (T1a) 或 submucosa (T1b)"],["T2","侵犯 muscularis propria"],["T3","侵犯 adventitia"],["T4a","可切除：pleura / pericardium / azygos / diaphragm / peritoneum"],["T4b","不可切除：aorta / vertebral body / trachea"]],
+  N:[["N0","無區域淋巴結"],["N1","1–2 顆"],["N2","3–6 顆"],["N3","≥7 顆"]],
+  M:[["M0","無遠端轉移"],["M1","遠端轉移"]],
+  note:"Stage grouping 依組織型態分開（Adenocarcinoma vs Squamous cell carcinoma），且再分 clinical (c)、pathologic (p)、post-neoadjuvant (yp) 三套，並納入 Grade 與腫瘤位置。太複雜無法單表呈現，分組請查組織型專屬表格。"}},
+{ch:17,part:"III. 上消化道 Upper GI",en:"Stomach",zh:"胃",ver:"8",d:{
+  T:[["Tis","原位癌 / 上皮內，未侵 lamina propria"],["T1a","侵 lamina propria 或 muscularis mucosae"],["T1b","侵 submucosa"],["T2","侵 muscularis propria"],["T3","穿透 subserosa，未及 visceral peritoneum"],["T4a","侵 serosa (visceral peritoneum)"],["T4b","侵鄰近結構/器官"]],
+  N:[["N0","0 顆"],["N1","1–2 顆"],["N2","3–6 顆"],["N3a","7–15 顆"],["N3b","≥16 顆"]],
+  M:[["M0","無"],["M1","遠端轉移"]],
+  stage:[["IA","T1 N0"],["IB","T1 N1 / T2 N0"],["IIA","T1 N2 / T2 N1 / T3 N0"],["IIB","T1 N3a / T2 N2 / T3 N1 / T4a N0"],["IIIA","T2 N3a / T3 N2 / T4a N1–2 / T4b N0"],["IIIB","T1–2 N3b / T3–4a N3a / T4b N1–2"],["IIIC","T3–4a N3b / T4b N3a–3b"],["IV","any M1"]],
+  note:"此為 pathologic (pTNM) 分組。另有 clinical 與 post-neoadjuvant 分組。"}},
+{ch:18,part:"III. 上消化道 Upper GI",en:"Small Intestine",zh:"小腸",ver:"8",d:null},
+
+/* Part IV Lower GI */
+{ch:19,part:"IV. 下消化道 Lower GI",en:"Appendix Carcinoma",zh:"闌尾癌",ver:"9",y:2023,d:null},
+{ch:20,part:"IV. 下消化道 Lower GI",en:"Colon & Rectum",zh:"結腸與直腸",ver:"8",d:{
+  T:[["Tis","原位癌 / intramucosal（侵 lamina propria，未穿 muscularis mucosae）"],["T1","侵 submucosa"],["T2","侵 muscularis propria"],["T3","穿透 MP 入 pericolorectal tissue"],["T4a","穿透 visceral peritoneum"],["T4b","直接侵犯/黏連鄰近器官或結構"]],
+  N:[["N0","0 顆"],["N1a","1 顆"],["N1b","2–3 顆"],["N1c","Tumor deposit，無陽性淋巴結"],["N2a","4–6 顆"],["N2b","≥7 顆"]],
+  M:[["M1a","1 個器官/部位，無腹膜轉移"],["M1b","≥2 個器官/部位"],["M1c","腹膜轉移 ± 其他器官"]],
+  stage:[["0","Tis N0"],["I","T1–2 N0"],["IIA","T3 N0"],["IIB","T4a N0"],["IIC","T4b N0"],["IIIA","T1–2 N1/N1c；T1 N2a"],["IIIB","T3–4a N1/N1c；T2–3 N2a；T1–2 N2b"],["IIIC","T4a N2a；T3–4a N2b；T4b N1–2"],["IVA","M1a"],["IVB","M1b"],["IVC","M1c"]],
+  note:""}},
+{ch:21,part:"IV. 下消化道 Lower GI",en:"Anus",zh:"肛門",ver:"9",y:2023,d:null},
+
+/* Part V Hepatobiliary */
+{ch:22,part:"V. 肝膽 Hepatobiliary",en:"Liver (HCC)",zh:"肝（肝細胞癌）",ver:"8",d:{
+  T:[["T1a","單顆 ≤2cm"],["T1b","單顆 >2cm，無血管侵犯"],["T2","單顆 >2cm 且有血管侵犯，或多顆皆 ≤5cm"],["T3","多顆，至少一顆 >5cm"],["T4","侵犯 portal/hepatic vein 主要分支，或直接侵犯鄰近器官（膽囊除外）/穿透 visceral peritoneum"]],
+  N:[["N0","無"],["N1","區域淋巴結轉移"]],
+  M:[["M0","無"],["M1","遠端轉移"]],
+  stage:[["IA","T1a N0"],["IB","T1b N0"],["II","T2 N0"],["IIIA","T3 N0"],["IIIB","T4 N0"],["IVA","any T N1 M0"],["IVB","any M1"]],
+  note:"僅適用 HCC，不含肝內膽管癌（見 Ch.23）。"}},
+{ch:23,part:"V. 肝膽 Hepatobiliary",en:"Intrahepatic Bile Ducts",zh:"肝內膽管",ver:"8",d:null},
+{ch:24,part:"V. 肝膽 Hepatobiliary",en:"Gallbladder",zh:"膽囊",ver:"8",d:null},
+{ch:25,part:"V. 肝膽 Hepatobiliary",en:"Perihilar Bile Ducts",zh:"肝門膽管",ver:"8",d:null},
+{ch:26,part:"V. 肝膽 Hepatobiliary",en:"Distal Bile Duct",zh:"遠端膽管",ver:"8",d:null},
+{ch:27,part:"V. 肝膽 Hepatobiliary",en:"Ampulla of Vater",zh:"壺腹",ver:"8",d:null},
+{ch:28,part:"V. 肝膽 Hepatobiliary",en:"Exocrine Pancreas",zh:"外分泌胰臟",ver:"8",d:{
+  T:[["Tis","原位癌（含 PanIN-3）"],["T1","≤2cm（T1a ≤0.5；T1b >0.5–1；T1c >1–2cm）"],["T2",">2–4cm"],["T3",">4cm"],["T4","侵犯 celiac axis、SMA 和/或 common hepatic artery（原發不可切除）"]],
+  N:[["N0","0 顆"],["N1","1–3 顆"],["N2","≥4 顆"]],
+  M:[["M0","無"],["M1","遠端轉移"]],
+  stage:[["IA","T1 N0"],["IB","T2 N0"],["IIA","T3 N0"],["IIB","T1–3 N1"],["III","any T N2；T4 any N"],["IV","any M1"]],
+  note:""}},
+
+/* Part VI NET */
+{ch:29,part:"VI. 神經內分泌 NET",en:"NET Stomach",zh:"胃神經內分泌瘤",ver:"9",y:2024,d:null},
+{ch:30,part:"VI. 神經內分泌 NET",en:"NET Duodenum & Ampulla of Vater",zh:"十二指腸與壺腹 NET",ver:"9",y:2024,d:null},
+{ch:31,part:"VI. 神經內分泌 NET",en:"NET Jejunum & Ileum",zh:"空腸與迴腸 NET",ver:"9",y:2024,d:null},
+{ch:32,part:"VI. 神經內分泌 NET",en:"NET Appendix",zh:"闌尾 NET",ver:"9",y:2024,d:null},
+{ch:33,part:"VI. 神經內分泌 NET",en:"NET Colon & Rectum",zh:"結腸與直腸 NET",ver:"9",y:2024,d:null},
+{ch:34,part:"VI. 神經內分泌 NET",en:"NET Pancreas",zh:"胰臟 NET",ver:"9",y:2024,d:null},
+
+/* Part VII Thorax */
+{ch:35,part:"VII. 胸腔 Thorax",en:"Thymus",zh:"胸腺",ver:"9",y:2025,d:null},
+{ch:36,part:"VII. 胸腔 Thorax",en:"Lung",zh:"肺",ver:"9",y:2025,d:null},
+{ch:37,part:"VII. 胸腔 Thorax",en:"Pleural Mesothelioma",zh:"肋膜間皮瘤",ver:"9",y:2025,d:null},
+
+/* Part VIII Bone */
+{ch:38,part:"VIII. 骨 Bone",en:"Bone",zh:"骨",ver:"8",d:{
+  T:[["（四肢/軀幹/顱面骨）",""],["T1","≤8cm"],["T2",">8cm"],["T3","原發骨內不連續腫瘤（skip）"],["（脊椎 Spine）",""],["T1","侷限 1 節或 2 相鄰節"],["T2","3 相鄰節"],["T3","4+ 相鄰節或非相鄰節"],["T4a","侵入 spinal canal"],["T4b","侵入 great vessels"],["（骨盆 Pelvis）",""],["T1","侷限 1 節，≤8cm(a)/>8cm(b)"],["T2","1 節+骨外，或 2 節無骨外（a/b 依大小）"],["T3","2 節+骨外（a/b）"],["T4a","跨 3 節或越過 SI joint / 薦椎神經孔"],["T4b","侵 external iliac vessels 或大體腫瘤栓"]],
+  N:[["N0","無"],["N1","區域淋巴結轉移"]],
+  M:[["M0","無"],["M1a","肺"],["M1b","骨或其他遠端部位"]],
+  G:[["G1","低惡性度"],["G2–G3","高惡性度"],["GX","無法評估"]],
+  stage:[["（僅四肢/軀幹/顱面骨有正式 stage group）",""],["IA","T1 N0 M0 G1/GX"],["IB","T2–3 N0 M0 G1/GX"],["IIA","T1 N0 M0 G2–3"],["IIB","T2 N0 M0 G2–3"],["III","T3 N0 M0 G2–3"],["IVA","any T N0 M1a"],["IVB","N1 任何 / M1b"]],
+  note:"脊椎與骨盆腫瘤在 8e 沒有正式 stage grouping，只用 TNM+G 描述。"}},
+
+/* Part IX Soft Tissue Sarcoma */
+{ch:39,part:"IX. 軟組織肉瘤 STS",en:"Introduction to Soft Tissue Sarcoma",zh:"軟組織肉瘤總論",ver:"8",gen:1,d:null},
+{ch:40,part:"IX. 軟組織肉瘤 STS",en:"STS of Head and Neck",zh:"頭頸軟組織肉瘤",ver:"8",d:null},
+{ch:41,part:"IX. 軟組織肉瘤 STS",en:"STS of Trunk & Extremities",zh:"軀幹與四肢軟組織肉瘤",ver:"8",d:{
+  T:[["T1","≤5cm"],["T2",">5–10cm"],["T3",">10–15cm"],["T4",">15cm"]],
+  N:[["N0","無"],["N1","區域淋巴結轉移"]],
+  M:[["M0","無"],["M1","遠端轉移"]],
+  G:[["G1","FNCLCC grade 1（分化1+核分裂1+壞死0/1 ≈ total 2–3）"],["G2","total 4–5"],["G3","total 6–8"],["GX","無法評估"]],
+  stage:[["IA","T1 N0 M0 G1/GX"],["IB","T2–4 N0 M0 G1/GX"],["II","T1 N0 M0 G2–3"],["IIIA","T2 N0 M0 G2–3"],["IIIB","T3–4 N0 M0 G2–3"],["IV","N1 任何 / M1 任何"]],
+  note:"四肢/軀幹 STS 的淋巴結轉移 (N1) 直接歸為 Stage IV。"}},
+{ch:42,part:"IX. 軟組織肉瘤 STS",en:"STS of Abdomen & Thoracic Visceral Organs",zh:"腹部與胸腔內臟軟組織肉瘤",ver:"8",d:null},
+{ch:43,part:"IX. 軟組織肉瘤 STS",en:"Gastrointestinal Stromal Tumor (GIST)",zh:"胃腸道基質瘤",ver:"8",d:null},
+{ch:44,part:"IX. 軟組織肉瘤 STS",en:"STS of Retroperitoneum",zh:"後腹腔軟組織肉瘤",ver:"8",d:null},
+{ch:45,part:"IX. 軟組織肉瘤 STS",en:"STS — Unusual Histologies/Site",zh:"特殊組織型/部位軟組織肉瘤",ver:"8",d:null},
+
+/* Part X Skin */
+{ch:46,part:"X. 皮膚 Skin",en:"Merkel Cell Carcinoma",zh:"梅克爾細胞癌",ver:"8",d:null},
+{ch:47,part:"X. 皮膚 Skin",en:"Melanoma of Skin",zh:"皮膚黑色素瘤",ver:"8",d:{
+  T:[["Tis","原位黑色素瘤"],["T1","≤1.0mm（T1a <0.8 無潰瘍；T1b <0.8 有潰瘍，或 0.8–1.0）"],["T2",">1.0–2.0mm（a 無潰瘍 / b 有潰瘍）"],["T3",">2.0–4.0mm（a / b）"],["T4",">4.0mm（a / b）"]],
+  N:[["N0","無"],["N1","1 顆，或 in-transit/satellite 無淋巴結"],["N2","2–3 顆，或 1 顆+in-transit"],["N3","≥4 顆，或 matted，或 ≥2 顆+in-transit"]],
+  M:[["M1a","皮膚/軟組織/非區域淋巴結"],["M1b","肺"],["M1c","其他內臟（非CNS）"],["M1d","CNS"],["（後綴）","LDH 正常 (0) / 升高 (1)"]],
+  stage:[["0","Tis"],["IA","T1a"],["IB","T1b / T2a"],["IIA","T2b / T3a"],["IIB","T3b / T4a"],["IIC","T4b"],["III","任何 N+（IIIA–D 依 T 與 N 細分）"],["IV","any M1"]],
+  note:"此為 pathologic (pTNM) 簡化分組。Stage III 細分 IIIA–IIID 規則繁複，請對照原表。"}},
+
+/* Part XI Breast */
+{ch:48,part:"XI. 乳房 Breast",en:"Breast",zh:"乳房",ver:"8",d:{
+  T:[["Tis","原位癌（DCIS / Paget 無腫塊）"],["T1","≤20mm（T1mi ≤1mm；T1a >1–5；T1b >5–10；T1c >10–20）"],["T2",">20–50mm"],["T3",">50mm"],["T4a","侵犯胸壁"],["T4b","皮膚潰瘍/衛星結節/水腫"],["T4c","T4a+T4b"],["T4d","發炎性乳癌"]],
+  N:[["N0","無"],["N1","可移動同側 level I/II 腋下淋巴結"],["N2a","固定/成團 level I/II 腋下"],["N2b","同側內乳淋巴結，無腋下"],["N3a","level III（infraclavicular）"],["N3b","內乳+腋下"],["N3c","鎖骨上（supraclavicular）"]],
+  M:[["M0","無"],["M1","遠端轉移"]],
+  stage:[["0","Tis N0"],["IA","T1 N0"],["IB","T0–1 N1mi"],["IIA","T0–1 N1；T2 N0"],["IIB","T2 N1；T3 N0"],["IIIA","T0–2 N2；T3 N1–2"],["IIIB","T4 N0–2"],["IIIC","any T N3"],["IV","any M1"]],
+  note:"此為 anatomic stage group。8e 另有 Prognostic Stage，納入 Grade、ER/PR/HER2、與基因檢測（如 Oncotype），實務上美國以 prognostic 為主。"}},
+
+/* Part XII Female Reproductive */
+{ch:49,part:"XII. 女性生殖 Female Repro",en:"Introduction to Female Reproductive Organs",zh:"女性生殖器官總論",ver:"8",gen:1,d:null},
+{ch:50,part:"XII. 女性生殖 Female Repro",en:"Vulva",zh:"外陰",ver:"9",y:2024,d:null},
+{ch:51,part:"XII. 女性生殖 Female Repro",en:"Vagina",zh:"陰道",ver:"8",d:null},
+{ch:52,part:"XII. 女性生殖 Female Repro",en:"Cervix Uteri",zh:"子宮頸",ver:"9",y:2021,d:{
+  T:[["T1 (I)","侷限子宮頸"],["T1a (IA)","顯微鏡下，深度 ≤5mm（IA1 ≤3mm；IA2 >3–5mm）"],["T1b (IB)","深度 >5mm，仍侷限子宮頸（IB1 ≤2cm；IB2 >2–4cm；IB3 >4cm）"],["T2 (II)","超出子宮但未及骨盆壁/陰道下1/3"],["T2a (IIA)","侵陰道上2/3，無 parametrium（IIA1 ≤4cm；IIA2 >4cm）"],["T2b (IIB)","侵 parametrium"],["T3 (III)","及陰道下1/3 / 骨盆壁 / 水腎 / 淋巴結"],["T3a (IIIA)","陰道下1/3，未及骨盆壁"],["T3b (IIIB)","骨盆壁或水腎/無功能腎"],["T4 (IVA)","侵膀胱/直腸黏膜或超出真骨盆"]],
+  N:[["N0","無"],["N1 (IIIC1)","骨盆淋巴結"],["N2 (IIIC2)","主動脈旁淋巴結"]],
+  M:[["M0","無"],["M1 (IVB)","遠端轉移"]],
+  note:"AJCC 9e 子宮頸與 FIGO 2018 一致：首度納入影像/病理淋巴結 (IIIC)，並依腫瘤大小細分 IB/IIA。"}},
+{ch:53,part:"XII. 女性生殖 Female Repro",en:"Corpus Uteri — Carcinoma",zh:"子宮體癌",ver:"8",d:null},
+{ch:54,part:"XII. 女性生殖 Female Repro",en:"Corpus Uteri — Sarcoma",zh:"子宮體肉瘤",ver:"8",d:null},
+{ch:55,part:"XII. 女性生殖 Female Repro",en:"Ovary, Fallopian Tube & Primary Peritoneal",zh:"卵巢/輸卵管/原發腹膜",ver:"8",d:null},
+{ch:56,part:"XII. 女性生殖 Female Repro",en:"Gestational Trophoblastic Neoplasm",zh:"妊娠滋養細胞瘤",ver:"8",d:null},
+
+/* Part XIII Male Genital */
+{ch:57,part:"XIII. 男性生殖 Male Genital",en:"Penis",zh:"陰莖",ver:"8",d:null},
+{ch:58,part:"XIII. 男性生殖 Male Genital",en:"Prostate",zh:"前列腺",ver:"8",d:{
+  T:[["T1","臨床無法觸知（T1a ≤5% TURP；T1b >5%；T1c 切片發現）"],["T2","侷限前列腺（T2a ≤半葉；T2b >半葉；T2c 兩葉）"],["T3a","包膜外侵犯"],["T3b","侵犯 seminal vesicle"],["T4","固定或侵犯鄰近結構（膀胱頸/直腸/提肛肌/骨盆壁）"]],
+  N:[["N0","無"],["N1","區域淋巴結轉移"]],
+  M:[["M1a","非區域淋巴結"],["M1b","骨"],["M1c","其他部位"]],
+  note:"8e 前列腺 stage group (I–IVB) 同時納入 PSA 與 Grade Group（Gleason）。例：cT1–2a N0 M0 + PSA<10 + GG1 = Stage I。完整分組需 PSA 與 GG，請對照原表。"}},
+{ch:59,part:"XIII. 男性生殖 Male Genital",en:"Testis",zh:"睪丸",ver:"8",d:{
+  T:[["pTis","GCNIS（生殖細胞原位瘤）"],["pT1","侷限睪丸無 LVI（seminoma 再分 pT1a <3cm / pT1b ≥3cm）"],["pT2","LVI，或侵 hilar 軟組織/epididymis/tunica vaginalis"],["pT3","侵 spermatic cord"],["pT4","侵 scrotum"]],
+  N:[["N0","無"],["N1","≤2cm 且 ≤5 顆"],["N2",">2–5cm，或 >5 顆，或結外侵犯"],["N3",">5cm"]],
+  M:[["M1a","非後腹腔淋巴結或肺轉移"],["M1b","其他內臟轉移"]],
+  S:[["S0","markers 正常"],["S1","LDH <1.5×N 且 hCG <5000 且 AFP <1000"],["S2","LDH 1.5–10×N 或 hCG 5000–50000 或 AFP 1000–10000"],["S3","LDH >10×N 或 hCG >50000 或 AFP >10000"]],
+  stage:[["0","pTis N0 M0 S0"],["I","T1–4 N0 M0 S0/SX（IA pT1 / IB pT2–4 / IS 任何 S1–3）"],["IIA","N1 M0 S0–1"],["IIB","N2 M0 S0–1"],["IIC","N3 M0 S0–1"],["IIIA","M1a S0–1"],["IIIB","N1–3 M0 S2 / M1a S2"],["IIIC","S3，或 M1b"]],
+  note:"睪丸癌獨有血清標記 S（LDH / hCG / AFP），分期須一併評估。"}},
+
+/* Part XIV Urinary */
+{ch:60,part:"XIV. 泌尿 Urinary",en:"Kidney",zh:"腎",ver:"8",d:{
+  T:[["T1","≤7cm，侷限腎（T1a ≤4；T1b >4–7）"],["T2",">7cm，侷限腎（T2a >7–10；T2b >10）"],["T3a","侵 renal vein/分支、腎竇脂肪或腎周脂肪，未越 Gerota"],["T3b","侵橫膈下 IVC"],["T3c","侵橫膈上 IVC 或 IVC 管壁"],["T4","越過 Gerota 筋膜，或侵同側腎上腺"]],
+  N:[["N0","無"],["N1","區域淋巴結轉移"]],
+  M:[["M0","無"],["M1","遠端轉移"]],
+  stage:[["I","T1 N0"],["II","T2 N0"],["III","T3 N0；T1–3 N1"],["IV","T4 任何；any M1"]],
+  note:""}},
+{ch:61,part:"XIV. 泌尿 Urinary",en:"Renal Pelvis & Ureter",zh:"腎盂與輸尿管",ver:"8",d:null},
+{ch:62,part:"XIV. 泌尿 Urinary",en:"Urinary Bladder",zh:"膀胱",ver:"8",d:{
+  T:[["Ta","非侵襲性乳突狀癌"],["Tis","原位癌 (CIS)"],["T1","侵 subepithelial connective tissue"],["T2a","侵 muscularis propria 內半"],["T2b","侵 muscularis propria 外半"],["T3a","顯微鏡下侵 perivesical tissue"],["T3b","肉眼 perivesical 腫塊"],["T4a","侵 prostatic stroma / 子宮 / 陰道"],["T4b","侵骨盆壁 / 腹壁"]],
+  N:[["N0","無"],["N1","真骨盆內單顆"],["N2","真骨盆內多顆"],["N3","common iliac 淋巴結"]],
+  M:[["M1a","越過 common iliac 之淋巴結"],["M1b","非淋巴結遠端轉移"]],
+  stage:[["0a","Ta N0"],["0is","Tis N0"],["I","T1 N0"],["II","T2 N0"],["IIIA","T3–4a N0；T1–4a N1"],["IIIB","T1–4a N2–3"],["IVA","T4b N0；any N M1a"],["IVB","M1b"]],
+  note:""}},
+{ch:63,part:"XIV. 泌尿 Urinary",en:"Urethra",zh:"尿道",ver:"8",d:null},
+
+/* Part XV Ophthalmic */
+{ch:64,part:"XV. 眼 Ophthalmic",en:"Eyelid Carcinoma",zh:"眼瞼癌",ver:"8",d:null},
+{ch:65,part:"XV. 眼 Ophthalmic",en:"Conjunctival Carcinoma",zh:"結膜癌",ver:"8",d:null},
+{ch:66,part:"XV. 眼 Ophthalmic",en:"Conjunctival Melanoma",zh:"結膜黑色素瘤",ver:"8",d:null},
+{ch:67,part:"XV. 眼 Ophthalmic",en:"Uveal Melanoma",zh:"葡萄膜黑色素瘤",ver:"8",d:null},
+{ch:68,part:"XV. 眼 Ophthalmic",en:"Retinoblastoma",zh:"視網膜母細胞瘤",ver:"8",d:null},
+{ch:69,part:"XV. 眼 Ophthalmic",en:"Lacrimal Gland Carcinoma",zh:"淚腺癌",ver:"8",d:null},
+{ch:70,part:"XV. 眼 Ophthalmic",en:"Orbital Sarcoma",zh:"眼眶肉瘤",ver:"8",d:null},
+{ch:71,part:"XV. 眼 Ophthalmic",en:"Ocular Adnexal Lymphoma",zh:"眼附屬器淋巴瘤",ver:"8",d:null},
+
+/* Part XVI CNS */
+{ch:72,part:"XVI. 中樞神經 CNS",en:"Brain and Spinal Cord",zh:"腦與脊髓",ver:"9",y:2023,d:null},
+
+/* Part XVII Endocrine */
+{ch:73,part:"XVII. 內分泌 Endocrine",en:"Thyroid — Differentiated & Anaplastic",zh:"甲狀腺（分化型與未分化型）",ver:"8",d:{
+  T:[["T1","≤2cm，侷限甲狀腺（T1a ≤1；T1b >1–2）"],["T2",">2–4cm"],["T3a",">4cm，侷限甲狀腺"],["T3b","任何大小，肉眼 ETE 至 strap muscles"],["T4a","肉眼 ETE 至皮下/喉/氣管/食道/RLN"],["T4b","侵 prevertebral fascia / carotid / 縱膈血管"]],
+  N:[["N0","無"],["N1a","Level VI/VII 中央區"],["N1b","側頸/咽後/縱膈上"]],
+  M:[["M0","無"],["M1","遠端轉移"]],
+  stage:[["（＜55 歲）",""],["I","any T any N M0"],["II","any T any N M1"],["（≥55 歲）",""],["I","T1–2 N0/NX M0"],["II","T1–2 N1 M0；T3 any N M0"],["III","T4a any N M0"],["IVA","T4b any N M0"],["IVB","any M1"]],
+  note:"分化型甲狀腺癌以年齡 55 歲為分期關鍵分界。Anaplastic 一律 Stage IV（IVA T4a/IVB T4b/IVC M1）。"}},
+{ch:74,part:"XVII. 內分泌 Endocrine",en:"Thyroid — Medullary",zh:"甲狀腺髓質癌",ver:"8",d:null},
+{ch:75,part:"XVII. 內分泌 Endocrine",en:"Parathyroid",zh:"副甲狀腺",ver:"8",d:null},
+{ch:76,part:"XVII. 內分泌 Endocrine",en:"Adrenal Cortical Carcinoma",zh:"腎上腺皮質癌",ver:"8",d:null},
+{ch:77,part:"XVII. 內分泌 Endocrine",en:"Adrenal Neuroendocrine Tumors",zh:"腎上腺神經內分泌瘤",ver:"8",d:null},
+
+/* Part XVIII Hematologic */
+{ch:78,part:"XVIII. 血液 Hematologic",en:"Introduction to Hematologic Malignancies",zh:"血液惡性腫瘤總論",ver:"8",gen:1,d:null},
+{ch:79,part:"XVIII. 血液 Hematologic",en:"Hodgkin and Non-Hodgkin Lymphomas",zh:"何杰金與非何杰金淋巴瘤",ver:"8",d:null},
+{ch:80,part:"XVIII. 血液 Hematologic",en:"Pediatric Hodgkin & Non-Hodgkin Lymphoma",zh:"兒童淋巴瘤",ver:"8",d:null},
+{ch:81,part:"XVIII. 血液 Hematologic",en:"Primary Cutaneous Lymphomas",zh:"原發皮膚淋巴瘤",ver:"8",d:null},
+{ch:82,part:"XVIII. 血液 Hematologic",en:"Plasma Cell Myeloma & Plasma Cell Disorders",zh:"漿細胞骨髓瘤與漿細胞疾病",ver:"8",d:null},
+{ch:83,part:"XVIII. 血液 Hematologic",en:"Leukemia",zh:"白血病",ver:"8",d:null}
+];
+
+/* ---------- 渲染 ---------- */
+const listEl=document.getElementById('list');
+const countEl=document.getElementById('count');
+const qEl=document.getElementById('q');
+const partSel=document.getElementById('part');
+let fVer="all", fDetail=false;
+
+// 填入部位下拉
+[...new Set(DATA.map(d=>d.part))].forEach(p=>{
+  const o=document.createElement('option');o.value=p;o.textContent=p;partSel.appendChild(o);
+});
+
+function esc(s){return s.replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));}
+function hl(s,q){if(!q)return esc(s);
+  const i=s.toLowerCase().indexOf(q.toLowerCase());
+  if(i<0)return esc(s);
+  return esc(s.slice(0,i))+'<mark>'+esc(s.slice(i,i+q.length))+'</mark>'+esc(s.slice(i+q.length));}
+
+function tbl(title,rows){
+  if(!rows||!rows.length)return'';
+  let h=`<h4>${title}</h4><table>`;
+  rows.forEach(([k,v])=>{h+=`<tr><td class="k">${esc(k)}</td><td>${esc(v)}</td></tr>`;});
+  return h+'</table>';
+}
+
+function detailHTML(d){
+  if(!d)return`<div class="pending"><b>TNM 待補</b>　目前僅提供版本資訊，完整 T/N/M 與 stage grouping 尚未填入。可請我補上這一章。</div>`;
+  let h='';
+  h+=tbl('T — 原發腫瘤',d.T);
+  h+=tbl('N — 區域淋巴結',d.N);
+  h+=tbl('M — 遠端轉移',d.M);
+  if(d.S)h+=tbl('S — 血清標記',d.S);
+  if(d.G)h+=tbl('G — 組織分級',d.G);
+  h+=tbl('Stage Grouping — 分期分組',d.stage);
+  if(d.note)h+=`<div class="note">${esc(d.note)}</div>`;
+  return h;
+}
+
+function render(){
+  const q=qEl.value.trim();
+  let cur="",html="",n=0;
+  DATA.forEach((d,idx)=>{
+    if(fVer!=="all"&&d.ver!==fVer)return;
+    if(fDetail&&!d.d)return;
+    if(partSel.value!=="all"&&d.part!==partSel.value)return;
+    if(q){
+      const hay=(d.en+' '+d.zh+' '+d.part+' '+('ch'+d.ch)).toLowerCase();
+      if(!hay.includes(q.toLowerCase()))return;
+    }
+    n++;
+    if(d.part!==cur){cur=d.part;html+=`<div class="part">${esc(cur)}</div>`;}
+    const badge=d.ver==="9"
+      ? `<span class="badge b9">9e${d.y?' · '+d.y:''}</span>`
+      : `<span class="badge b8">8e</span>`;
+    const dflag=d.gen?'' : (d.d?'<span class="hasdetail">● 已填 TNM</span>':'<span class="nodetail">○ 待補</span>');
+    html+=`<div class="card" data-i="${idx}">
+      <div class="row">
+        <span class="ch">${d.ch}</span>
+        <span class="name"><span class="en">${hl(d.en,q)}</span> <span class="zh">${hl(d.zh,q)}</span> ${dflag}</span>
+        ${badge}
+        <span class="arrow">▶</span>
+      </div>
+      <div class="detail">${detailHTML(d.d)}</div>
+    </div>`;
+  });
+  listEl.innerHTML=html||`<div class="empty">查無符合條件的項目</div>`;
+  countEl.textContent=`顯示 ${n} / ${DATA.length} 章節　·　8e ${DATA.filter(x=>x.ver==='8').length} 章、9e ${DATA.filter(x=>x.ver==='9').length} 章`;
+  // 綁定展開
+  listEl.querySelectorAll('.card').forEach(c=>{
+    c.querySelector('.row').onclick=()=>c.classList.toggle('open');
+  });
+}
+
+qEl.oninput=render;
+partSel.onchange=render;
+document.querySelectorAll('.chip[data-ver]').forEach(ch=>{
+  ch.onclick=()=>{
+    document.querySelectorAll('.chip[data-ver]').forEach(x=>x.classList.remove('active'));
+    ch.classList.add('active');fVer=ch.dataset.ver;render();
+  };
+});
+document.querySelector('.chip[data-detail]').onclick=function(){
+  fDetail=!fDetail;this.classList.toggle('active',fDetail);render();
+};
+render();
+</script>
+</body>
+</html>
