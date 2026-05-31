@@ -82,6 +82,13 @@
 /* ---- 資料：全部 83 章節版本對照（100% 來自附檔）＋ 高分癌症完整 8e/9e TNM ----
    ver: "8" 或 "9"；y: v9 年份；d: 詳情物件或 null
    d = { T:[[key,val]...], N:[...], M:[...], S:[...]?, G:[...]?, stage:[[key,val]...], note:"" } */
+
+/* 頭頸通用 N（ENE = extranodal extension，8e 新納入）與通用 stage grouping，
+   適用口腔/口咽(p16-)/下咽/喉/鼻竇/頭頸皮膚癌等 */
+const HN_M=[["M0","無"],["M1","遠端轉移"]];
+const HN_N=[["N0","無區域淋巴結轉移"],["N1","單顆同側 ≤3cm，ENE(−)"],["N2a","單顆同側 >3–6cm ENE(−)；或(pN) 單顆同側 ≤3cm ENE(+)"],["N2b","多顆同側 ≤6cm ENE(−)"],["N2c","雙側/對側 ≤6cm ENE(−)"],["N3a",">6cm ENE(−)"],["N3b","臨床明顯 ENE(+)；或(pN) 單顆 >3cm ENE(+) 或多顆/對側 ENE(+)"]];
+const HN_STAGE=[["I","T1 N0"],["II","T2 N0"],["III","T3 N0；T1–3 N1"],["IVA","T4a N0–1；T1–4a N2"],["IVB","any T N3；T4b any N"],["IVC","any M1"]];
+
 const DATA = [
 /* Part I */
 {ch:1,part:"I. 一般原則 General",en:"Principles of Cancer Staging",zh:"癌症分期原則",ver:"8",gen:1,d:null},
@@ -91,16 +98,36 @@ const DATA = [
 
 /* Part II Head & Neck */
 {ch:5,part:"II. 頭頸 Head & Neck",en:"Staging Head and Neck Cancers",zh:"頭頸癌分期總論",ver:"8",gen:1,d:null},
-{ch:6,part:"II. 頭頸 Head & Neck",en:"Cervical Nodes & Unknown Primary",zh:"頸部淋巴結與不明原發",ver:"8",d:null},
-{ch:7,part:"II. 頭頸 Head & Neck",en:"Oral Cavity",zh:"口腔",ver:"8",d:null},
+{ch:6,part:"II. 頭頸 Head & Neck",en:"Cervical Nodes & Unknown Primary",zh:"頸部淋巴結與不明原發",ver:"8",d:{
+  T:[["T0","未找到原發病灶"]],
+  N:HN_N,M:HN_M,stage:HN_STAGE,
+  note:"頸部轉移但原發不明：p16(+) 依 HPV 口咽 (Ch10) 分期；EBV(+) 依鼻咽 (Ch9)；其餘依此頸部 N 分類。"}},
+{ch:7,part:"II. 頭頸 Head & Neck",en:"Oral Cavity",zh:"口腔",ver:"8",d:{
+  T:[["Tis","原位癌"],["T1","≤2cm 且 DOI ≤5mm"],["T2","≤2cm 且 DOI >5–10mm，或 >2–4cm 且 DOI ≤10mm"],["T3",">4cm，或任何 DOI >10mm"],["T4a","中度晚期：侵 mandible/maxilla 皮質骨、上頜竇、臉部皮膚"],["T4b","非常晚期：masticator space、pterygoid plates、顱底、包覆 ICA"]],
+  N:HN_N,M:HN_M,stage:HN_STAGE,
+  note:"8e 重點：T 納入 DOI（depth of invasion）、N 納入 ENE。"}},
 {ch:8,part:"II. 頭頸 Head & Neck",en:"Major Salivary Glands",zh:"大唾液腺",ver:"9",y:2026,d:null},
 {ch:9,part:"II. 頭頸 Head & Neck",en:"Nasopharynx",zh:"鼻咽",ver:"9",y:2025,d:null},
 {ch:10,part:"II. 頭頸 Head & Neck",en:"HPV-Mediated (p16+) Oropharynx",zh:"HPV相關(p16+)口咽",ver:"9",y:2026,d:null},
-{ch:11,part:"II. 頭頸 Head & Neck",en:"Oropharynx (p16-) & Hypopharynx",zh:"口咽(p16-)與下咽",ver:"8",d:null},
-{ch:12,part:"II. 頭頸 Head & Neck",en:"Nasal Cavity & Paranasal Sinuses",zh:"鼻腔與副鼻竇",ver:"8",d:null},
-{ch:13,part:"II. 頭頸 Head & Neck",en:"Larynx",zh:"喉",ver:"8",d:null},
-{ch:14,part:"II. 頭頸 Head & Neck",en:"Mucosal Melanoma of Head & Neck",zh:"頭頸黏膜黑色素瘤",ver:"8",d:null},
-{ch:15,part:"II. 頭頸 Head & Neck",en:"Cutaneous Ca of Head & Neck",zh:"頭頸皮膚癌",ver:"8",d:null},
+{ch:11,part:"II. 頭頸 Head & Neck",en:"Oropharynx (p16-) & Hypopharynx",zh:"口咽(p16-)與下咽",ver:"8",d:{
+  T:[["【口咽 p16(−)】",""],["T1","≤2cm"],["T2",">2–4cm"],["T3",">4cm 或延伸至會厭舌面"],["T4a","侵喉、舌深部肌肉、medial pterygoid、硬腭、下頜骨"],["T4b","侵 lateral pterygoid、pterygoid plates、側鼻咽、顱底、包覆 ICA"],["【下咽】",""],["T1","侷限單一 subsite 且 ≤2cm"],["T2",">一 subsite 或 >2–4cm，無半喉固定"],["T3",">4cm 或半喉固定或食道黏膜延伸"],["T4a","侵 thyroid/cricoid 軟骨、舌骨、甲狀腺、食道肌肉、中央區軟組織"],["T4b","侵 prevertebral fascia、包覆頸動脈、縱膈結構"]],
+  N:HN_N,M:HN_M,stage:HN_STAGE,
+  note:"p16(+) 口咽請改用 Ch10（9e，分期完全不同）。"}},
+{ch:12,part:"II. 頭頸 Head & Neck",en:"Nasal Cavity & Paranasal Sinuses",zh:"鼻腔與副鼻竇",ver:"8",d:{
+  T:[["【上頜竇 Maxillary sinus】",""],["T1","侷限黏膜，無骨侵蝕"],["T2","骨侵蝕/破壞（含硬腭、中鼻道），但不含後壁/pterygoid plates"],["T3","侵後壁、皮下組織、眼眶底/內側壁、pterygoid fossa、篩竇"],["T4a","侵前眼眶、頰部皮膚、pterygoid plates、infratemporal fossa、cribriform plate、蝶竇/額竇"],["T4b","侵眼眶尖、硬腦膜、腦、中顱窩、腦神經(除 V2)、鼻咽、clivus"],["【鼻腔/篩竇】",""],["T1","單一 subsite ± 骨侵犯"],["T2","兩 subsite 或鄰近 nasoethmoidal 複合區 ± 骨侵犯"],["T3","侵眼眶內側/底、上頜竇、腭、cribriform plate"]],
+  N:HN_N,M:HN_M,stage:HN_STAGE,note:""}},
+{ch:13,part:"II. 頭頸 Head & Neck",en:"Larynx",zh:"喉",ver:"8",d:{
+  T:[["【聲門上 Supraglottis】",""],["T1","單一 subsite，聲帶活動正常"],["T2","侵 >1 鄰近 subsite，無固定"],["T3","聲帶固定，或侵 postcricoid/pre-epiglottic/paraglottic space/甲狀軟骨內皮質"],["T4a","穿甲狀軟骨外皮質、氣管、頸部軟組織、舌深部、strap muscle、甲狀腺、食道"],["T4b","prevertebral space、包覆頸動脈、縱膈結構"],["【聲門 Glottis】",""],["T1","侷限聲帶(T1a 單側/T1b 雙側)，活動正常"],["T2","延伸至聲門上/下或活動受限"],["T3","聲帶固定、paraglottic space、甲狀軟骨內皮質"],["【聲門下 Subglottis】",""],["T1","侷限聲門下"],["T2","延伸至聲帶 ± 活動"],["T3","聲帶固定"]],
+  N:HN_N,M:HN_M,stage:HN_STAGE,note:"T4a/T4b 三 subsite 共用（同聲門上）。"}},
+{ch:14,part:"II. 頭頸 Head & Neck",en:"Mucosal Melanoma of Head & Neck",zh:"頭頸黏膜黑色素瘤",ver:"8",d:{
+  T:[["T3","黏膜及其正下方軟組織"],["T4a","中度晚期：深部軟組織、軟骨、骨、覆蓋之皮膚"],["T4b","非常晚期：腦、硬腦膜、顱底、下位腦神經(IX–XII)、masticator space、頸動脈、prevertebral space、縱膈結構"]],
+  N:[["N0","無"],["N1","區域淋巴結轉移"]],M:HN_M,
+  stage:[["III","T3 N0"],["IVA","T4a N0；T3–4a N1"],["IVB","T4b any N"],["IVC","any M1"]],
+  note:"黏膜黑色素瘤惡性度高，分期自 T3 起跳（無 T1/T2）。"}},
+{ch:15,part:"II. 頭頸 Head & Neck",en:"Cutaneous Ca of Head & Neck",zh:"頭頸皮膚癌",ver:"8",d:{
+  T:[["Tis","原位癌"],["T1","<2cm"],["T2","≥2–<4cm"],["T3","≥4cm，或輕微骨侵蝕、perineural invasion、深部侵犯(>6mm 或超出皮下脂肪)"],["T4a","肉眼皮質骨/骨髓侵犯"],["T4b","顱底/顱孔侵犯"]],
+  N:HN_N,M:HN_M,stage:HN_STAGE,
+  note:"適用頭頸皮膚 SCC（眼瞼除外，見 Ch64）。"}},
 
 /* Part III Upper GI */
 {ch:16,part:"III. 上消化道 Upper GI",en:"Esophagus & Esophagogastric Junction",zh:"食道與胃食道交界",ver:"8",d:{
@@ -114,7 +141,12 @@ const DATA = [
   M:[["M0","無"],["M1","遠端轉移"]],
   stage:[["IA","T1 N0"],["IB","T1 N1 / T2 N0"],["IIA","T1 N2 / T2 N1 / T3 N0"],["IIB","T1 N3a / T2 N2 / T3 N1 / T4a N0"],["IIIA","T2 N3a / T3 N2 / T4a N1–2 / T4b N0"],["IIIB","T1–2 N3b / T3–4a N3a / T4b N1–2"],["IIIC","T3–4a N3b / T4b N3a–3b"],["IV","any M1"]],
   note:"此為 pathologic (pTNM) 分組。另有 clinical 與 post-neoadjuvant 分組。"}},
-{ch:18,part:"III. 上消化道 Upper GI",en:"Small Intestine",zh:"小腸",ver:"8",d:null},
+{ch:18,part:"III. 上消化道 Upper GI",en:"Small Intestine",zh:"小腸",ver:"8",d:{
+  T:[["Tis","原位癌"],["T1a","侵 lamina propria"],["T1b","侵 submucosa"],["T2","侵 muscularis propria"],["T3","穿透 MP 入 subserosa 或非腹膜化 perimuscular 組織（mesentery/retroperitoneum）≤2cm"],["T4","穿透 visceral peritoneum 或直接侵犯其他器官/結構（含 >2cm 入 mesentery/retroperitoneum；十二指腸侵 pancreas/膽管）"]],
+  N:[["N0","0 顆"],["N1","1–2 顆"],["N2","≥3 顆"]],
+  M:[["M0","無"],["M1","遠端轉移"]],
+  stage:[["I","T1–2 N0"],["IIA","T3 N0"],["IIB","T4 N0"],["IIIA","any T N1"],["IIIB","any T N2"],["IV","any M1"]],
+  note:"適用小腸腺癌。"}},
 
 /* Part IV Lower GI */
 {ch:19,part:"IV. 下消化道 Lower GI",en:"Appendix Carcinoma",zh:"闌尾癌",ver:"9",y:2023,d:null},
@@ -133,11 +165,36 @@ const DATA = [
   M:[["M0","無"],["M1","遠端轉移"]],
   stage:[["IA","T1a N0"],["IB","T1b N0"],["II","T2 N0"],["IIIA","T3 N0"],["IIIB","T4 N0"],["IVA","any T N1 M0"],["IVB","any M1"]],
   note:"僅適用 HCC，不含肝內膽管癌（見 Ch.23）。"}},
-{ch:23,part:"V. 肝膽 Hepatobiliary",en:"Intrahepatic Bile Ducts",zh:"肝內膽管",ver:"8",d:null},
-{ch:24,part:"V. 肝膽 Hepatobiliary",en:"Gallbladder",zh:"膽囊",ver:"8",d:null},
-{ch:25,part:"V. 肝膽 Hepatobiliary",en:"Perihilar Bile Ducts",zh:"肝門膽管",ver:"8",d:null},
-{ch:26,part:"V. 肝膽 Hepatobiliary",en:"Distal Bile Duct",zh:"遠端膽管",ver:"8",d:null},
-{ch:27,part:"V. 肝膽 Hepatobiliary",en:"Ampulla of Vater",zh:"壺腹",ver:"8",d:null},
+{ch:23,part:"V. 肝膽 Hepatobiliary",en:"Intrahepatic Bile Ducts",zh:"肝內膽管",ver:"8",d:{
+  T:[["Tis","原位癌"],["T1a","單顆 ≤5cm，無血管侵犯"],["T1b","單顆 >5cm，無血管侵犯"],["T2","單顆且有肝內血管侵犯，或多顆（± 血管侵犯）"],["T3","穿透 visceral peritoneum"],["T4","直接侵犯局部肝外結構"]],
+  N:[["N0","無"],["N1","區域淋巴結轉移"]],
+  M:[["M0","無"],["M1","遠端轉移"]],
+  stage:[["0","Tis N0"],["IA","T1a N0"],["IB","T1b N0"],["II","T2 N0"],["IIIA","T3 N0"],["IIIB","T4 N0；any T N1"],["IV","any M1"]],
+  note:""}},
+{ch:24,part:"V. 肝膽 Hepatobiliary",en:"Gallbladder",zh:"膽囊",ver:"8",d:{
+  T:[["Tis","原位癌"],["T1a","侵 lamina propria"],["T1b","侵肌層"],["T2a","侵 perimuscular CT，腹膜側，未及 serosa"],["T2b","侵 perimuscular CT，肝臟側，未入肝"],["T3","穿透 serosa 和/或直接侵肝和/或一個鄰近器官"],["T4","侵 main portal vein / hepatic artery，或 ≥2 個肝外器官"]],
+  N:[["N0","0 顆"],["N1","1–3 顆"],["N2","≥4 顆"]],
+  M:[["M0","無"],["M1","遠端轉移"]],
+  stage:[["0","Tis N0"],["I","T1 N0"],["IIA","T2a N0"],["IIB","T2b N0"],["IIIA","T3 N0"],["IIIB","T1–3 N1"],["IVA","T4 N0–1"],["IVB","any T N2；any M1"]],
+  note:""}},
+{ch:25,part:"V. 肝膽 Hepatobiliary",en:"Perihilar Bile Ducts",zh:"肝門膽管",ver:"8",d:{
+  T:[["Tis","原位癌"],["T1","侷限膽管，可達肌層或纖維組織"],["T2a","超出膽管壁入周圍脂肪組織"],["T2b","侵入鄰近肝實質"],["T3","侵單側 portal vein 或 hepatic artery 分支"],["T4","侵 main portal vein 或其雙側分支、或 common hepatic artery、或單側二級膽管+對側血管侵犯"]],
+  N:[["N0","0 顆"],["N1","1–3 顆（cystic duct/CBD/hepatic artery/portal vein 旁）"],["N2","≥4 顆"]],
+  M:[["M0","無"],["M1","遠端轉移"]],
+  stage:[["0","Tis N0"],["I","T1 N0"],["II","T2a–b N0"],["IIIA","T3 N0"],["IIIB","T4 N0"],["IIIC","any T N1"],["IVA","any T N2"],["IVB","any M1"]],
+  note:""}},
+{ch:26,part:"V. 肝膽 Hepatobiliary",en:"Distal Bile Duct",zh:"遠端膽管",ver:"8",d:{
+  T:[["Tis","原位癌"],["T1","侵膽管壁深度 <5mm"],["T2","深度 5–12mm"],["T3","深度 >12mm"],["T4","侵 celiac axis、SMA 和/或 common hepatic artery"]],
+  N:[["N0","0 顆"],["N1","1–3 顆"],["N2","≥4 顆"]],
+  M:[["M0","無"],["M1","遠端轉移"]],
+  stage:[["0","Tis N0"],["I","T1 N0"],["IIA","T1 N1 / T2 N0"],["IIB","T2 N1 / T3 N0–1"],["IIIA","T1–3 N2"],["IIIB","T4 any N"],["IV","any M1"]],
+  note:""}},
+{ch:27,part:"V. 肝膽 Hepatobiliary",en:"Ampulla of Vater",zh:"壺腹",ver:"8",d:{
+  T:[["Tis","原位癌"],["T1a","侷限壺腹或 sphincter of Oddi"],["T1b","超出 sphincter 至十二指腸 submucosa"],["T2","侵十二指腸 muscularis propria"],["T3a","侵 pancreas ≤0.5cm"],["T3b","侵 pancreas >0.5cm 或 peripancreatic 組織/SMV/SMA"],["T4","侵 celiac axis / SMA / common hepatic artery"]],
+  N:[["N0","0 顆"],["N1","1–3 顆"],["N2","≥4 顆"]],
+  M:[["M0","無"],["M1","遠端轉移"]],
+  stage:[["0","Tis N0"],["IA","T1a N0"],["IB","T1b–T2 N0"],["IIA","T3a N0"],["IIB","T3b N0"],["IIIA","T1–3 N1"],["IIIB","T4 any N；any T N2"],["IV","any M1"]],
+  note:""}},
 {ch:28,part:"V. 肝膽 Hepatobiliary",en:"Exocrine Pancreas",zh:"外分泌胰臟",ver:"8",d:{
   T:[["Tis","原位癌（含 PanIN-3）"],["T1","≤2cm（T1a ≤0.5；T1b >0.5–1；T1c >1–2cm）"],["T2",">2–4cm"],["T3",">4cm"],["T4","侵犯 celiac axis、SMA 和/或 common hepatic artery（原發不可切除）"]],
   N:[["N0","0 顆"],["N1","1–3 顆"],["N2","≥4 顆"]],
@@ -169,7 +226,10 @@ const DATA = [
 
 /* Part IX Soft Tissue Sarcoma */
 {ch:39,part:"IX. 軟組織肉瘤 STS",en:"Introduction to Soft Tissue Sarcoma",zh:"軟組織肉瘤總論",ver:"8",gen:1,d:null},
-{ch:40,part:"IX. 軟組織肉瘤 STS",en:"STS of Head and Neck",zh:"頭頸軟組織肉瘤",ver:"8",d:null},
+{ch:40,part:"IX. 軟組織肉瘤 STS",en:"STS of Head and Neck",zh:"頭頸軟組織肉瘤",ver:"8",d:{
+  T:[["T1","≤2cm"],["T2",">2–4cm"],["T3",">4cm"],["T4a","侵眼眶、顱底/硬腦膜、中央區內臟、顏面骨、pterygoid 肌肉"],["T4b","侵腦實質、包覆頸動脈、prevertebral 肌肉、經神經周圍擴散至 CNS"]],
+  N:[["N0","無"],["N1","區域淋巴結轉移"]],M:HN_M,
+  note:"頭頸 STS T 用較小 size cutoff（≤2 / 2–4 / >4cm）。8e 未訂正式 stage grouping。"}},
 {ch:41,part:"IX. 軟組織肉瘤 STS",en:"STS of Trunk & Extremities",zh:"軀幹與四肢軟組織肉瘤",ver:"8",d:{
   T:[["T1","≤5cm"],["T2",">5–10cm"],["T3",">10–15cm"],["T4",">15cm"]],
   N:[["N0","無"],["N1","區域淋巴結轉移"]],
@@ -177,13 +237,32 @@ const DATA = [
   G:[["G1","FNCLCC grade 1（分化1+核分裂1+壞死0/1 ≈ total 2–3）"],["G2","total 4–5"],["G3","total 6–8"],["GX","無法評估"]],
   stage:[["IA","T1 N0 M0 G1/GX"],["IB","T2–4 N0 M0 G1/GX"],["II","T1 N0 M0 G2–3"],["IIIA","T2 N0 M0 G2–3"],["IIIB","T3–4 N0 M0 G2–3"],["IV","N1 任何 / M1 任何"]],
   note:"四肢/軀幹 STS 的淋巴結轉移 (N1) 直接歸為 Stage IV。"}},
-{ch:42,part:"IX. 軟組織肉瘤 STS",en:"STS of Abdomen & Thoracic Visceral Organs",zh:"腹部與胸腔內臟軟組織肉瘤",ver:"8",d:null},
-{ch:43,part:"IX. 軟組織肉瘤 STS",en:"Gastrointestinal Stromal Tumor (GIST)",zh:"胃腸道基質瘤",ver:"8",d:null},
-{ch:44,part:"IX. 軟組織肉瘤 STS",en:"STS of Retroperitoneum",zh:"後腹腔軟組織肉瘤",ver:"8",d:null},
-{ch:45,part:"IX. 軟組織肉瘤 STS",en:"STS — Unusual Histologies/Site",zh:"特殊組織型/部位軟組織肉瘤",ver:"8",d:null},
+{ch:42,part:"IX. 軟組織肉瘤 STS",en:"STS of Abdomen & Thoracic Visceral Organs",zh:"腹部與胸腔內臟軟組織肉瘤",ver:"8",d:{
+  T:[["T1","侷限器官內"],["T2","延伸至器官外組織（T2a 侵 visceral peritoneum；T2b 延伸超出至 mesentery）"],["T3","侵犯另一器官"],["T4","多病灶（T4a 2 處；T4b 3–5 處；T4c >5 處）"]],
+  N:[["N0","無"],["N1","區域淋巴結轉移"]],M:[["M0","無"],["M1","遠端轉移"]],
+  note:"內臟 STS 的 T 以器官侵犯/多病灶為基準（非腫瘤大小）。8e 未訂正式 stage grouping。"}},
+{ch:43,part:"IX. 軟組織肉瘤 STS",en:"Gastrointestinal Stromal Tumor (GIST)",zh:"胃腸道基質瘤",ver:"8",d:{
+  T:[["T1","≤2cm"],["T2",">2–5cm"],["T3",">5–10cm"],["T4",">10cm"]],
+  N:[["N0","無"],["N1","區域淋巴結轉移"]],M:[["M0","無"],["M1","遠端轉移"]],
+  G:[["低 mitotic","≤5 / 5mm²（≤5 / 50 HPF）"],["高 mitotic",">5 / 5mm²"]],
+  stage:[["【胃/網膜 GIST】",""],["IA","T1–2 N0 M0，低 mitotic"],["IB","T3 N0 M0，低"],["II","T1–2 高；T4 低"],["IIIA","T3 N0 M0 高"],["IIIB","T4 N0 M0 高"],["IV","any N1；any M1"]],
+  note:"分期關鍵為 mitotic rate。小腸 GIST 惡性度較高，stage grouping 與胃不同（同 T 對應更高 stage），詳見原表。"}},
+{ch:44,part:"IX. 軟組織肉瘤 STS",en:"STS of Retroperitoneum",zh:"後腹腔軟組織肉瘤",ver:"8",d:{
+  T:[["T1","≤5cm"],["T2",">5–10cm"],["T3",">10–15cm"],["T4",">15cm"]],
+  N:[["N0","無"],["N1","區域淋巴結轉移"]],M:[["M0","無"],["M1","遠端轉移"]],
+  G:[["G1","FNCLCC grade 1"],["G2","grade 2"],["G3","grade 3"]],
+  stage:[["IA","T1 N0 M0 G1/GX"],["IB","T2–4 N0 M0 G1/GX"],["II","T1 N0 M0 G2–3"],["IIIA","T2 N0 M0 G2–3"],["IIIB","T3–4 N0 M0 G2–3；any N1"],["IV","any M1"]],
+  note:"T（大小）與 stage grouping 同四肢/軀幹 STS。"}},
+{ch:45,part:"IX. 軟組織肉瘤 STS",en:"STS — Unusual Histologies/Site",zh:"特殊組織型/部位軟組織肉瘤",ver:"8",d:{
+  note:"AJCC 8e 對此類（如 angiosarcoma、Kaposi、dermatofibrosarcoma、desmoid 等特殊組織型，或無標準分期之部位）未訂定正式 TNM stage grouping。請依組織型個別評估。"}},
 
 /* Part X Skin */
-{ch:46,part:"X. 皮膚 Skin",en:"Merkel Cell Carcinoma",zh:"梅克爾細胞癌",ver:"8",d:null},
+{ch:46,part:"X. 皮膚 Skin",en:"Merkel Cell Carcinoma",zh:"梅克爾細胞癌",ver:"8",d:{
+  T:[["Tis","原位癌"],["T1","≤2cm"],["T2",">2–5cm"],["T3",">5cm"],["T4","侵筋膜、肌肉、軟骨或骨"]],
+  N:[["cN0","臨床無淋巴結"],["cN1","臨床可見區域淋巴結"],["N2","in-transit 轉移，無淋巴結"],["N3","in-transit 轉移 + 淋巴結"],["pN1a(sn)","顯微鏡下（前哨）淋巴結轉移"],["pN1b","臨床偵測後病理確認"]],
+  M:[["M1a","皮膚/皮下/遠端淋巴結"],["M1b","肺"],["M1c","其他內臟"]],
+  stage:[["（臨床 cTNM）",""],["0","Tis"],["I","T1 cN0"],["IIA","T2–3 cN0"],["IIB","T4 cN0"],["III","any T cN1–3"],["IV","any M1"]],
+  note:"病理分期 (pTNM) 另分 IIIA/IIIB，依前哨/臨床淋巴結狀態。"}},
 {ch:47,part:"X. 皮膚 Skin",en:"Melanoma of Skin",zh:"皮膚黑色素瘤",ver:"8",d:{
   T:[["Tis","原位黑色素瘤"],["T1","≤1.0mm（T1a <0.8 無潰瘍；T1b <0.8 有潰瘍，或 0.8–1.0）"],["T2",">1.0–2.0mm（a 無潰瘍 / b 有潰瘍）"],["T3",">2.0–4.0mm（a / b）"],["T4",">4.0mm（a / b）"]],
   N:[["N0","無"],["N1","1 顆，或 in-transit/satellite 無淋巴結"],["N2","2–3 顆，或 1 顆+in-transit"],["N3","≥4 顆，或 matted，或 ≥2 顆+in-transit"]],
@@ -202,19 +281,43 @@ const DATA = [
 /* Part XII Female Reproductive */
 {ch:49,part:"XII. 女性生殖 Female Repro",en:"Introduction to Female Reproductive Organs",zh:"女性生殖器官總論",ver:"8",gen:1,d:null},
 {ch:50,part:"XII. 女性生殖 Female Repro",en:"Vulva",zh:"外陰",ver:"9",y:2024,d:null},
-{ch:51,part:"XII. 女性生殖 Female Repro",en:"Vagina",zh:"陰道",ver:"8",d:null},
+{ch:51,part:"XII. 女性生殖 Female Repro",en:"Vagina",zh:"陰道",ver:"8",d:{
+  T:[["Tis","原位癌"],["T1 (I)","侷限陰道"],["T2 (II)","侵 paravaginal 組織，未及骨盆壁"],["T3 (III)","及骨盆壁"],["T4 (IVA)","侵膀胱/直腸黏膜或超出真骨盆"]],
+  N:[["N0","無"],["N1","骨盆或腹股溝淋巴結"]],
+  M:[["M0","無"],["M1 (IVB)","遠端轉移"]],
+  stage:[["I","T1 N0"],["II","T2 N0"],["III","T1–3 N1；T3 N0"],["IVA","T4 任何 N"],["IVB","any M1"]],
+  note:"對應 FIGO 分期。"}},
 {ch:52,part:"XII. 女性生殖 Female Repro",en:"Cervix Uteri",zh:"子宮頸",ver:"9",y:2021,d:{
   T:[["T1 (I)","侷限子宮頸"],["T1a (IA)","顯微鏡下，深度 ≤5mm（IA1 ≤3mm；IA2 >3–5mm）"],["T1b (IB)","深度 >5mm，仍侷限子宮頸（IB1 ≤2cm；IB2 >2–4cm；IB3 >4cm）"],["T2 (II)","超出子宮但未及骨盆壁/陰道下1/3"],["T2a (IIA)","侵陰道上2/3，無 parametrium（IIA1 ≤4cm；IIA2 >4cm）"],["T2b (IIB)","侵 parametrium"],["T3 (III)","及陰道下1/3 / 骨盆壁 / 水腎 / 淋巴結"],["T3a (IIIA)","陰道下1/3，未及骨盆壁"],["T3b (IIIB)","骨盆壁或水腎/無功能腎"],["T4 (IVA)","侵膀胱/直腸黏膜或超出真骨盆"]],
   N:[["N0","無"],["N1 (IIIC1)","骨盆淋巴結"],["N2 (IIIC2)","主動脈旁淋巴結"]],
   M:[["M0","無"],["M1 (IVB)","遠端轉移"]],
   note:"AJCC 9e 子宮頸與 FIGO 2018 一致：首度納入影像/病理淋巴結 (IIIC)，並依腫瘤大小細分 IB/IIA。"}},
-{ch:53,part:"XII. 女性生殖 Female Repro",en:"Corpus Uteri — Carcinoma",zh:"子宮體癌",ver:"8",d:null},
-{ch:54,part:"XII. 女性生殖 Female Repro",en:"Corpus Uteri — Sarcoma",zh:"子宮體肉瘤",ver:"8",d:null},
-{ch:55,part:"XII. 女性生殖 Female Repro",en:"Ovary, Fallopian Tube & Primary Peritoneal",zh:"卵巢/輸卵管/原發腹膜",ver:"8",d:null},
+{ch:53,part:"XII. 女性生殖 Female Repro",en:"Corpus Uteri — Carcinoma",zh:"子宮體癌",ver:"8",d:{
+  T:[["T1 (I)","侷限子宮體（含子宮頸內膜腺體）"],["T1a (IA)","侵犯 <1/2 myometrium"],["T1b (IB)","侵犯 ≥1/2 myometrium"],["T2 (II)","侵犯子宮頸間質"],["T3a (IIIA)","侵 serosa 和/或 adnexa"],["T3b (IIIB)","陰道或 parametrial 侵犯"],["T4 (IVA)","侵膀胱/腸黏膜"]],
+  N:[["N0","無"],["N1 (IIIC1)","骨盆淋巴結"],["N2 (IIIC2)","主動脈旁淋巴結"]],
+  M:[["M0","無"],["M1 (IVB)","遠端轉移（含腹腔內、鼠蹊淋巴結）"]],
+  stage:[["I","T1 N0"],["II","T2 N0"],["IIIA","T3a N0"],["IIIB","T3b N0"],["IIIC1","N1"],["IIIC2","N2"],["IVA","T4"],["IVB","any M1"]],
+  note:"AJCC 8e 採 FIGO 2009。FIGO 已於 2023 改版（納入組織型/分子分型），但本章為 8e。"}},
+{ch:54,part:"XII. 女性生殖 Female Repro",en:"Corpus Uteri — Sarcoma",zh:"子宮體肉瘤",ver:"8",d:{
+  T:[["T1","侷限子宮（T1a ≤5cm；T1b >5cm）"],["T2","延伸至骨盆（T2a 侵 adnexa；T2b 侵其他骨盆組織）"],["T3","侵腹腔組織（T3a 單一部位；T3b >一處）"],["T4","侵膀胱/直腸"]],
+  N:[["N0","無"],["N1","區域淋巴結轉移"]],
+  M:[["M0","無"],["M1","遠端轉移"]],
+  note:"適用 leiomyosarcoma 與 endometrial stromal sarcoma。Adenosarcoma 另有 T 定義（含內膜/肌層侵犯深度）。"}},
+{ch:55,part:"XII. 女性生殖 Female Repro",en:"Ovary, Fallopian Tube & Primary Peritoneal",zh:"卵巢/輸卵管/原發腹膜",ver:"8",d:{
+  T:[["T1 (I)","侷限卵巢/輸卵管"],["T1a","單側，包膜完整，表面無腫瘤，腹水/沖洗陰性"],["T1b","雙側，其餘同 T1a"],["T1c","包膜破裂/表面腫瘤/腹水或沖洗陽性"],["T2 (II)","骨盆內延伸（T2a 子宮/輸卵管/卵巢；T2b 其他骨盆組織）"],["T3 (III)","骨盆外腹膜轉移和/或後腹腔淋巴結（T3a 顯微；T3b 肉眼 ≤2cm；T3c >2cm 和/或淋巴結）"]],
+  N:[["N0","無"],["N1a (IIIA1i)","後腹腔淋巴結 ≤10mm"],["N1b (IIIA1ii)","後腹腔淋巴結 >10mm"]],
+  M:[["M1a (IVA)","胸水細胞學陽性"],["M1b (IVB)","肝/脾實質、腹腔外器官、鼠蹊或腹腔外淋巴結"]],
+  stage:[["IA/IB/IC","T1a / T1b / T1c N0"],["IIA/IIB","T2a / T2b N0"],["IIIA1","N1（僅後腹腔淋巴結）"],["IIIA2","T3a N0–1"],["IIIB","T3b N0–1"],["IIIC","T3c N0–1"],["IVA","M1a"],["IVB","M1b"]],
+  note:"對應 FIGO 2014。"}},
 {ch:56,part:"XII. 女性生殖 Female Repro",en:"Gestational Trophoblastic Neoplasm",zh:"妊娠滋養細胞瘤",ver:"8",d:null},
 
 /* Part XIII Male Genital */
-{ch:57,part:"XIII. 男性生殖 Male Genital",en:"Penis",zh:"陰莖",ver:"8",d:null},
+{ch:57,part:"XIII. 男性生殖 Male Genital",en:"Penis",zh:"陰莖",ver:"8",d:{
+  T:[["Tis","原位癌"],["Ta","非侵襲性局部 SCC"],["T1a","侵 subepithelial CT，無 LVI/perineural，且非低分化"],["T1b","侵 subepithelial CT，有 LVI/perineural 或低分化"],["T2","侵 corpus spongiosum（± 尿道）"],["T3","侵 corpus cavernosum（± 尿道）"],["T4","侵鄰近結構（陰囊、前列腺、恥骨）"]],
+  N:[["cN0","無可觸知腫大淋巴結"],["cN1","單顆可移動單側腹股溝"],["cN2","≥2 顆單側或雙側可移動腹股溝"],["cN3","固定腹股溝腫塊或骨盆淋巴結"],["pN1","≤2 顆單側腹股溝，無 ENE"],["pN2","≥3 顆單側或雙側"],["pN3","骨盆淋巴結或 ENE"]],
+  M:[["M0","無"],["M1","遠端轉移"]],
+  stage:[["0is","Tis N0"],["0a","Ta N0"],["I","T1a N0"],["IIA","T1b–T2 N0"],["IIB","T3 N0"],["IIIA","T1–3 N1"],["IIIB","T1–3 N2"],["IV","T4 any N；any N3；any M1"]],
+  note:""}},
 {ch:58,part:"XIII. 男性生殖 Male Genital",en:"Prostate",zh:"前列腺",ver:"8",d:{
   T:[["T1","臨床無法觸知（T1a ≤5% TURP；T1b >5%；T1c 切片發現）"],["T2","侷限前列腺（T2a ≤半葉；T2b >半葉；T2c 兩葉）"],["T3a","包膜外侵犯"],["T3b","侵犯 seminal vesicle"],["T4","固定或侵犯鄰近結構（膀胱頸/直腸/提肛肌/骨盆壁）"]],
   N:[["N0","無"],["N1","區域淋巴結轉移"]],
@@ -235,24 +338,59 @@ const DATA = [
   M:[["M0","無"],["M1","遠端轉移"]],
   stage:[["I","T1 N0"],["II","T2 N0"],["III","T3 N0；T1–3 N1"],["IV","T4 任何；any M1"]],
   note:""}},
-{ch:61,part:"XIV. 泌尿 Urinary",en:"Renal Pelvis & Ureter",zh:"腎盂與輸尿管",ver:"8",d:null},
+{ch:61,part:"XIV. 泌尿 Urinary",en:"Renal Pelvis & Ureter",zh:"腎盂與輸尿管",ver:"8",d:{
+  T:[["Ta","非侵襲性乳突狀癌"],["Tis","原位癌 (CIS)"],["T1","侵 subepithelial connective tissue"],["T2","侵 muscularis"],["T3","（腎盂）穿過肌層入 peripelvic 脂肪或腎實質；（輸尿管）入 periureteric 脂肪"],["T4","侵鄰近器官，或穿過腎入腎周脂肪"]],
+  N:[["N0","無"],["N1","單顆 ≤2cm"],["N2","單顆 >2cm 或多顆"]],
+  M:[["M0","無"],["M1","遠端轉移"]],
+  stage:[["0a","Ta N0"],["0is","Tis N0"],["I","T1 N0"],["II","T2 N0"],["III","T3 N0"],["IV","T4 N0；any N1–2；any M1"]],
+  note:"上泌尿道泌尿上皮癌 (urothelial carcinoma)。"}},
 {ch:62,part:"XIV. 泌尿 Urinary",en:"Urinary Bladder",zh:"膀胱",ver:"8",d:{
   T:[["Ta","非侵襲性乳突狀癌"],["Tis","原位癌 (CIS)"],["T1","侵 subepithelial connective tissue"],["T2a","侵 muscularis propria 內半"],["T2b","侵 muscularis propria 外半"],["T3a","顯微鏡下侵 perivesical tissue"],["T3b","肉眼 perivesical 腫塊"],["T4a","侵 prostatic stroma / 子宮 / 陰道"],["T4b","侵骨盆壁 / 腹壁"]],
   N:[["N0","無"],["N1","真骨盆內單顆"],["N2","真骨盆內多顆"],["N3","common iliac 淋巴結"]],
   M:[["M1a","越過 common iliac 之淋巴結"],["M1b","非淋巴結遠端轉移"]],
   stage:[["0a","Ta N0"],["0is","Tis N0"],["I","T1 N0"],["II","T2 N0"],["IIIA","T3–4a N0；T1–4a N1"],["IIIB","T1–4a N2–3"],["IVA","T4b N0；any N M1a"],["IVB","M1b"]],
   note:""}},
-{ch:63,part:"XIV. 泌尿 Urinary",en:"Urethra",zh:"尿道",ver:"8",d:null},
+{ch:63,part:"XIV. 泌尿 Urinary",en:"Urethra",zh:"尿道",ver:"8",d:{
+  T:[["（男性陰莖部 / 女性尿道）",""],["Ta","非侵襲性乳突狀癌"],["Tis","原位癌"],["T1","侵 subepithelial CT"],["T2","侵 corpus spongiosum / 前列腺 / periurethral muscle"],["T3","侵 corpus cavernosum / 超出前列腺包膜 / 前陰道壁 / 膀胱頸"],["T4","侵鄰近器官"],["（前列腺部泌尿上皮癌）",""],["Tis pu/pd","CIS 於前列腺尿道(pu)/前列腺管(pd)"]],
+  N:[["N0","無"],["N1","單顆 ≤2cm"],["N2","單顆 >2cm 或多顆"]],
+  M:[["M0","無"],["M1","遠端轉移"]],
+  stage:[["0a","Ta N0"],["0is","Tis N0"],["I","T1 N0"],["II","T2 N0"],["III","T3 N0；T1–3 N1"],["IV","T4；any N2；any M1"]],
+  note:"分男性/女性原發尿道癌與前列腺部泌尿上皮癌兩套 T，詳見原表。"}},
 
 /* Part XV Ophthalmic */
-{ch:64,part:"XV. 眼 Ophthalmic",en:"Eyelid Carcinoma",zh:"眼瞼癌",ver:"8",d:null},
-{ch:65,part:"XV. 眼 Ophthalmic",en:"Conjunctival Carcinoma",zh:"結膜癌",ver:"8",d:null},
-{ch:66,part:"XV. 眼 Ophthalmic",en:"Conjunctival Melanoma",zh:"結膜黑色素瘤",ver:"8",d:null},
-{ch:67,part:"XV. 眼 Ophthalmic",en:"Uveal Melanoma",zh:"葡萄膜黑色素瘤",ver:"8",d:null},
-{ch:68,part:"XV. 眼 Ophthalmic",en:"Retinoblastoma",zh:"視網膜母細胞瘤",ver:"8",d:null},
-{ch:69,part:"XV. 眼 Ophthalmic",en:"Lacrimal Gland Carcinoma",zh:"淚腺癌",ver:"8",d:null},
-{ch:70,part:"XV. 眼 Ophthalmic",en:"Orbital Sarcoma",zh:"眼眶肉瘤",ver:"8",d:null},
-{ch:71,part:"XV. 眼 Ophthalmic",en:"Ocular Adnexal Lymphoma",zh:"眼附屬器淋巴瘤",ver:"8",d:null},
+{ch:64,part:"XV. 眼 Ophthalmic",en:"Eyelid Carcinoma",zh:"眼瞼癌",ver:"8",d:{
+  T:[["Tis","原位癌"],["T1","≤10mm"],["T2",">10–20mm"],["T3",">20–30mm"],["T4","侵鄰近眼球/眼眶/顏面結構（T4a 眼球/眼眶/perineural；T4b 顱骨/腦）"]],
+  N:[["N0","無"],["N1","單顆同側 ≤3cm"],["N2",">3cm 或雙側/對側"]],
+  M:[["M0","無"],["M1","遠端轉移"]],
+  note:"T1–T3 另依是否侵 tarsal plate/眼瞼緣/全層再分 a/b/c。"}},
+{ch:65,part:"XV. 眼 Ophthalmic",en:"Conjunctival Carcinoma",zh:"結膜癌",ver:"8",d:{
+  T:[["Tis","原位癌"],["T1","侷限結膜（依象限數細分）"],["T2","侵鄰近結構（角膜等）"],["T3","侵眼球、眼瞼、眼眶、鼻竇"],["T4","侵腦"]],
+  N:[["N0","無"],["N1","區域淋巴結轉移"]],M:[["M0","無"],["M1","遠端轉移"]],
+  note:"T 細分以結膜象限數為基準，此處為框架，詳細 a/b/c 請對照原表。"}},
+{ch:66,part:"XV. 眼 Ophthalmic",en:"Conjunctival Melanoma",zh:"結膜黑色素瘤",ver:"8",d:{
+  T:[["T1","bulbar 結膜（依象限）"],["T2","非 bulbar（palpebral/forniceal/caruncle）"],["T3","侵眼球、眼瞼、眼眶、鼻竇"],["T4","侵 CNS"]],
+  N:[["N0","無"],["N1","區域淋巴結轉移"]],M:[["M0","無"],["M1","遠端轉移"]],
+  note:"以腫瘤位置（bulbar vs 非 bulbar）為主軸。"}},
+{ch:67,part:"XV. 眼 Ophthalmic",en:"Uveal Melanoma",zh:"葡萄膜黑色素瘤",ver:"8",d:{
+  T:[["T1–T4","依 size category 1–4（最大基底徑 × 厚度的矩陣表）"],["a/b/c/d","各 T 再依 ciliary body 侵犯與眼外延伸 ≤5mm 細分"]],
+  N:[["N0","無"],["N1","區域淋巴結轉移"]],
+  M:[["M1a","最大轉移徑 ≤3cm"],["M1b","3.1–8cm"],["M1c",">8cm"]],
+  note:"T 由「最大基底徑(mm) × 厚度(mm)」對照 AJCC size-category 矩陣 (1–4) 決定，無法用單一文字表達，務必查原始矩陣表。"}},
+{ch:68,part:"XV. 眼 Ophthalmic",en:"Retinoblastoma",zh:"視網膜母細胞瘤",ver:"8",d:{
+  T:[["cT1","視網膜內（T1a ≤3mm 且遠離中心窩/視盤；T1b >3mm 或近中心窩/視盤）"],["cT2","視網膜剝離或玻璃體/視網膜下種植（T2a/T2b）"],["cT3","晚期眼內（青光眼、眼內出血等）"],["cT4","眼外（T4a 影像見視神經/眼眶；T4b 臨床 proptosis/眼眶腫塊）"]],
+  N:[["N0","無"],["N1","區域淋巴結轉移"]],
+  M:[["M0","無"],["M1a","CNS 以外遠端轉移"],["M1b","CNS 轉移"]],
+  note:"另有 H（heritable trait）分類：HX/H0/H1，記錄遺傳性 RB1 突變狀態。"}},
+{ch:69,part:"XV. 眼 Ophthalmic",en:"Lacrimal Gland Carcinoma",zh:"淚腺癌",ver:"8",d:{
+  T:[["T1","≤2cm"],["T2",">2–4cm"],["T3",">4cm"],["T4","侵骨膜/眼眶骨/鄰近結構（T4a 骨膜；T4b 眼眶軟組織/視神經/眼球；T4c 骨/鼻竇/腦）"]],
+  N:[["N0","無"],["N1","區域淋巴結轉移"]],M:[["M0","無"],["M1","遠端轉移"]],note:""}},
+{ch:70,part:"XV. 眼 Ophthalmic",en:"Orbital Sarcoma",zh:"眼眶肉瘤",ver:"8",d:{
+  T:[["T1","≤2cm"],["T2",">2cm，無骨/眼球侵犯"],["T3","侵眼眶骨/periorbita"],["T4","侵眼球/眼周結構（眼瞼、鼻竇、腦）"]],
+  N:[["N0","無"],["N1","區域淋巴結轉移"]],M:[["M0","無"],["M1","遠端轉移"]],note:""}},
+{ch:71,part:"XV. 眼 Ophthalmic",en:"Ocular Adnexal Lymphoma",zh:"眼附屬器淋巴瘤",ver:"8",d:{
+  T:[["T1","侷限結膜"],["T2","侵眼眶"],["T3","侵 preseptal 眼瞼"],["T4","侵淚腺/鼻淚管/鼻竇/顱內"]],
+  N:[["N0","無"],["N1–N3","區域/遠端淋巴結（依範圍）"]],M:[["M0","無"],["M1","遠端/其他器官"]],
+  note:"屬淋巴瘤，臨床常同時用 Ann Arbor/Lugano 系統評估。"}},
 
 /* Part XVI CNS */
 {ch:72,part:"XVI. 中樞神經 CNS",en:"Brain and Spinal Cord",zh:"腦與脊髓",ver:"9",y:2023,d:null},
@@ -264,10 +402,30 @@ const DATA = [
   M:[["M0","無"],["M1","遠端轉移"]],
   stage:[["（＜55 歲）",""],["I","any T any N M0"],["II","any T any N M1"],["（≥55 歲）",""],["I","T1–2 N0/NX M0"],["II","T1–2 N1 M0；T3 any N M0"],["III","T4a any N M0"],["IVA","T4b any N M0"],["IVB","any M1"]],
   note:"分化型甲狀腺癌以年齡 55 歲為分期關鍵分界。Anaplastic 一律 Stage IV（IVA T4a/IVB T4b/IVC M1）。"}},
-{ch:74,part:"XVII. 內分泌 Endocrine",en:"Thyroid — Medullary",zh:"甲狀腺髓質癌",ver:"8",d:null},
-{ch:75,part:"XVII. 內分泌 Endocrine",en:"Parathyroid",zh:"副甲狀腺",ver:"8",d:null},
-{ch:76,part:"XVII. 內分泌 Endocrine",en:"Adrenal Cortical Carcinoma",zh:"腎上腺皮質癌",ver:"8",d:null},
-{ch:77,part:"XVII. 內分泌 Endocrine",en:"Adrenal Neuroendocrine Tumors",zh:"腎上腺神經內分泌瘤",ver:"8",d:null},
+{ch:74,part:"XVII. 內分泌 Endocrine",en:"Thyroid — Medullary",zh:"甲狀腺髓質癌",ver:"8",d:{
+  T:[["T1","≤2cm，侷限甲狀腺（T1a ≤1；T1b >1–2）"],["T2",">2–4cm"],["T3a",">4cm，侷限甲狀腺"],["T3b","任何大小，肉眼 ETE 至 strap muscles"],["T4a","中度進展：侵皮下/喉/氣管/食道/RLN"],["T4b","極度進展：侵 prevertebral fascia / carotid / 縱膈血管"]],
+  N:[["N0","無"],["N1a","Level VI/VII 中央區"],["N1b","側頸/咽後/縱膈上"]],
+  M:[["M0","無"],["M1","遠端轉移"]],
+  stage:[["I","T1 N0 M0"],["II","T2–3 N0 M0"],["III","T1–3 N1a M0"],["IVA","T4a any N M0；T1–3 N1b M0"],["IVB","T4b any N M0"],["IVC","any M1"]],
+  note:"髓質癌分期不分年齡（與分化型不同）。"}},
+{ch:75,part:"XVII. 內分泌 Endocrine",en:"Parathyroid",zh:"副甲狀腺",ver:"8",d:{
+  T:[["T1","侷限於副甲狀腺，僅軟組織侵犯"],["T2","直接侵犯甲狀腺"],["T3","直接侵犯 RLN / 食道 / 氣管 / strap muscles / 迷走神經"],["T4","侵犯主要血管或脊椎"]],
+  N:[["N0","無"],["N1a","Level VI/VII 中央區"],["N1b","側頸/縱膈上"]],
+  M:[["M0","無"],["M1","遠端轉移"]],
+  stage:[],
+  note:"AJCC 8e 未提供正式 stage grouping（資料不足），僅定義 T/N/M 分類。"}},
+{ch:76,part:"XVII. 內分泌 Endocrine",en:"Adrenal Cortical Carcinoma",zh:"腎上腺皮質癌",ver:"8",d:{
+  T:[["T1","≤5cm，無腺外侵犯"],["T2",">5cm，無腺外侵犯"],["T3","任何大小，腺外侵犯但未侵鄰近器官"],["T4","侵犯鄰近器官（腎/橫膈/胰/脾/肝）或大血管（腎靜脈/腔靜脈）"]],
+  N:[["N0","無"],["N1","區域淋巴結轉移"]],
+  M:[["M0","無"],["M1","遠端轉移"]],
+  stage:[["I","T1 N0 M0"],["II","T2 N0 M0"],["III","T1–2 N1 M0；T3–4 N0–1 M0（局部進展）"],["IV","any M1"]],
+  note:"Stage III＝T3/T4 或 N1（任一局部進展因子）；Stage IV＝遠端轉移。"}},
+{ch:77,part:"XVII. 內分泌 Endocrine",en:"Adrenal Neuroendocrine Tumors",zh:"腎上腺神經內分泌瘤（嗜鉻細胞瘤/副神經節瘤）",ver:"8",d:{
+  T:[["T1","<5cm，無腺外侵犯"],["T2","≥5cm 腎上腺嗜鉻細胞瘤；或任何大小之功能性副神經節瘤(PGL)"],["T3","任何大小，侵犯周圍組織（肝/胰/脾/腎）"]],
+  N:[["N0","無"],["N1","區域淋巴結轉移"]],
+  M:[["M0","無"],["M1a","僅骨轉移"],["M1b","僅遠端淋巴結/肝/肺轉移"],["M1c","骨＋多處其他部位轉移"]],
+  stage:[["I","T1 N0 M0"],["II","T2 N0 M0"],["III","T1–2 N1 M0；T3 any N M0"],["IV","any M1"]],
+  note:"M 細分 M1a/M1b/M1c 反映轉移部位與預後。"}},
 
 /* Part XVIII Hematologic */
 {ch:78,part:"XVIII. 血液 Hematologic",en:"Introduction to Hematologic Malignancies",zh:"血液惡性腫瘤總論",ver:"8",gen:1,d:null},
