@@ -74,7 +74,7 @@
     <select id="part"><option value="all">所有部位系統</option></select>
   </div>
 </header>
-<div class="disclaimer">本表 TNM 內容供快速查詢與教學參考，臨床分期決策請對照 AJCC 原書 / UpToDate。標示「TNM 待補」者目前僅提供版本資訊。</div>
+<div class="disclaimer">本表 TNM 內容供快速查詢與教學參考，臨床分期決策請對照 AJCC 原書 / UpToDate。9e 章節依 2023–2026 文獻整理；少數細分(如黑色素瘤 Stage III、唾液腺/間皮瘤完整分組)以原書為準。</div>
 <div class="count" id="count"></div>
 <main id="list"></main>
 
@@ -91,13 +91,30 @@ const HN_STAGE=[["I","T1 N0"],["II","T2 N0"],["III","T3 N0；T1–3 N1"],["IVA",
 
 const DATA = [
 /* Part I */
-{ch:1,part:"I. 一般原則 General",en:"Principles of Cancer Staging",zh:"癌症分期原則",ver:"8",gen:1,d:null},
-{ch:2,part:"I. 一般原則 General",en:"Organization of AJCC Manual",zh:"AJCC 手冊架構",ver:"8",gen:1,d:null},
-{ch:3,part:"I. 一般原則 General",en:"Cancer Survival Analysis",zh:"癌症存活分析",ver:"8",gen:1,d:null},
-{ch:4,part:"I. 一般原則 General",en:"Risk Models for Individualized Prognosis",zh:"個別化預後風險模型",ver:"8",gen:1,d:null},
+{ch:1,part:"I. 一般原則 General",en:"Principles of Cancer Staging",zh:"癌症分期原則",ver:"8",gen:1,d:{
+  sys:[
+    {title:"分類時機（前綴）",rows:[["c (cTNM)","臨床分期：治療前理學/影像/內視鏡/切片"],["p (pTNM)","病理分期：手術切除標本"],["yc / yp","新輔助治療後之臨床/病理分期"],["r (rTNM)","無病後復發再分期"],["a (aTNM)","屍檢分期"]]},
+    {title:"核心規則",rows:[["T/N/M","原發腫瘤、區域淋巴結、遠端轉移"],["分期分組","T+N+M 組合為 Stage（部分癌另納 grade/標記）"],["存疑時","若 T 或 N 分級存疑，選較低(較輕)的類別"],["確認","微觀確診後方可定 pT/pN"]]}],
+  note:"AJCC 分期為預後溝通與治療決策之共同語言。第 8 版部分癌種採 prognostic stage group（整合非解剖因子）。"}},
+{ch:2,part:"I. 一般原則 General",en:"Organization of AJCC Manual",zh:"AJCC 手冊架構",ver:"8",gen:1,d:{
+  sys:[
+    {title:"手冊組織",rows:[["分部","依解剖部位分為多個 Part（頭頸、消化、胸腔…）"],["每章內容","T/N/M 定義、stage grouping、登錄資料變數、預後因子"],["AJCC×UICC×FIGO","三方協作維持 TNM 一致性（婦科對齊 FIGO）"]]}],
+  note:"第 8 版另引入 prognostic factors grid 與 risk model 收錄準則。v9 起改為各癌種獨立更新（rolling updates）。"}},
+{ch:3,part:"I. 一般原則 General",en:"Cancer Survival Analysis",zh:"癌症存活分析",ver:"8",gen:1,d:{
+  sys:[
+    {title:"存活指標",rows:[["Overall survival (OS)","任何原因死亡"],["Cause-specific / Disease-specific (CSS/DSS)","僅該癌死亡為事件"],["Relative survival","觀察存活 ÷ 同齡一般族群預期存活"],["Observed survival","未校正之實際存活"]]},
+    {title:"方法",rows:[["Kaplan–Meier","處理 censoring 之存活曲線"],["Life-table (actuarial)","區間法"],["Cox PH","多變項風險比 (HR)"]]}],
+  note:"分期之效度以能否分層存活來驗證；理想分期應呈單調(hierarchical)之存活遞減。"}},
+{ch:4,part:"I. 一般原則 General",en:"Risk Models for Individualized Prognosis",zh:"個別化預後風險模型",ver:"8",gen:1,d:{
+  sys:[
+    {title:"超越 TNM 的個別化預後",rows:[["Nomogram","整合多變項輸出個人化風險/存活機率"],["納入因子","TNM＋年齡、grade、分子標記、PSA 等"],["AJCC 認可準則","須有效度驗證、校準佳、可推廣、透明"]]}],
+  note:"TNM 為群體分層；nomogram/risk calculator 補足個人化預測。AJCC 設有模型背書(endorsement)標準。"}},
 
 /* Part II Head & Neck */
-{ch:5,part:"II. 頭頸 Head & Neck",en:"Staging Head and Neck Cancers",zh:"頭頸癌分期總論",ver:"8",gen:1,d:null},
+{ch:5,part:"II. 頭頸 Head & Neck",en:"Staging Head and Neck Cancers",zh:"頭頸癌分期總論",ver:"8",gen:1,d:{
+  sys:[
+    {title:"頭頸分期通則",rows:[["ENE","Extranodal extension 為 8e 起 N 分期關鍵（臨床 ENE(+) → N3b）"],["DOI","口腔癌以 depth of invasion 修正 T"],["p16/HPV","口咽癌依 p16 狀態分兩套系統"],["通用 N（多數黏膜癌）","N1 單顆同側 ≤3cm ENE(−)…N3b ENE(+)"]]}],
+  note:"本部多數黏膜鱗癌共用 ENE-based N 與通用 stage grouping；鼻咽、HPV 口咽、唾液腺、甲狀腺另有獨立系統。"}},
 {ch:6,part:"II. 頭頸 Head & Neck",en:"Cervical Nodes & Unknown Primary",zh:"頸部淋巴結與不明原發",ver:"8",d:{
   T:[["T0","未找到原發病灶"]],
   N:HN_N,M:HN_M,stage:HN_STAGE,
@@ -295,7 +312,11 @@ const DATA = [
   note:"脊椎與骨盆腫瘤在 8e 沒有正式 stage grouping，只用 TNM+G 描述。"}},
 
 /* Part IX Soft Tissue Sarcoma */
-{ch:39,part:"IX. 軟組織肉瘤 STS",en:"Introduction to Soft Tissue Sarcoma",zh:"軟組織肉瘤總論",ver:"8",gen:1,d:null},
+{ch:39,part:"IX. 軟組織肉瘤 STS",en:"Introduction to Soft Tissue Sarcoma",zh:"軟組織肉瘤總論",ver:"8",gen:1,d:{
+  sys:[
+    {title:"依解剖部位分章（T 定義不同）",rows:[["軀幹/四肢","以大小 5/10/15cm 分 T1–T4"],["腹膜後","獨立 T 分期"],["頭頸","體積較小，T 以 cm 細分"],["腹腔/胸腔內臟","獨立系統"]]},
+    {title:"分級（預後核心）",rows:[["FNCLCC grade","分化＋核分裂＋壞死 → G1–G3"],["Stage","同時納入 grade（高 grade 即使小腫瘤分期較高）"]]}],
+  note:"STS 分期高度依賴組織學 grade 與部位。GIST、Kaposi、纖維瘤病等有各自規則。"}},
 {ch:40,part:"IX. 軟組織肉瘤 STS",en:"STS of Head and Neck",zh:"頭頸軟組織肉瘤",ver:"8",d:{
   T:[["T1","≤2cm"],["T2",">2–4cm"],["T3",">4cm"],["T4a","侵眼眶、顱底/硬腦膜、中央區內臟、顏面骨、pterygoid 肌肉"],["T4b","侵腦實質、包覆頸動脈、prevertebral 肌肉、經神經周圍擴散至 CNS"]],
   N:[["N0","無"],["N1","區域淋巴結轉移"]],M:HN_M,
@@ -337,8 +358,8 @@ const DATA = [
   T:[["Tis","原位黑色素瘤"],["T1","≤1.0mm（T1a <0.8 無潰瘍；T1b <0.8 有潰瘍，或 0.8–1.0）"],["T2",">1.0–2.0mm（a 無潰瘍 / b 有潰瘍）"],["T3",">2.0–4.0mm（a / b）"],["T4",">4.0mm（a / b）"]],
   N:[["N0","無"],["N1","1 顆，或 in-transit/satellite 無淋巴結"],["N2","2–3 顆，或 1 顆+in-transit"],["N3","≥4 顆，或 matted，或 ≥2 顆+in-transit"]],
   M:[["M1a","皮膚/軟組織/非區域淋巴結"],["M1b","肺"],["M1c","其他內臟（非CNS）"],["M1d","CNS"],["（後綴）","LDH 正常 (0) / 升高 (1)"]],
-  stage:[["0","Tis"],["IA","T1a"],["IB","T1b / T2a"],["IIA","T2b / T3a"],["IIB","T3b / T4a"],["IIC","T4b"],["III","任何 N+（IIIA–D 依 T 與 N 細分）"],["IV","any M1"]],
-  note:"此為 pathologic (pTNM) 簡化分組。Stage III 細分 IIIA–IIID 規則繁複，請對照原表。"}},
+  stage:[["0","Tis"],["IA","T1a"],["IB","T1b / T2a"],["IIA","T2b / T3a"],["IIB","T3b / T4a"],["IIC","T4b"],["IIIA","T1a/b–T2a；N1a 或 N2a"],["IIIB","T0 N1b/c；T1a/b–T2a N1b/c 或 N2b；T2b/T3a N1a–N2b"],["IIIC","T0 N2b/c 或 N3b/c；T1a–T3a N2c 或 N3；T3b/T4a 任何 ≥N1；T4b N1a–N2c"],["IIID","T4b N3a/b/c"],["IV","any M1"]],
+  note:"pathologic (pTNM) 分組。Stage III 依 T（厚度/潰瘍）與 N（淋巴結數/in-transit/matted）細分 IIIA–IIID。M1 後綴 LDH：正常(0)/升高(1)。"}},
 
 /* Part XI Breast */
 {ch:48,part:"XI. 乳房 Breast",en:"Breast",zh:"乳房",ver:"8",d:{
@@ -349,7 +370,11 @@ const DATA = [
   note:"此為 anatomic stage group。8e 另有 Prognostic Stage，納入 Grade、ER/PR/HER2、與基因檢測（如 Oncotype），實務上美國以 prognostic 為主。"}},
 
 /* Part XII Female Reproductive */
-{ch:49,part:"XII. 女性生殖 Female Repro",en:"Introduction to Female Reproductive Organs",zh:"女性生殖器官總論",ver:"8",gen:1,d:null},
+{ch:49,part:"XII. 女性生殖 Female Repro",en:"Introduction to Female Reproductive Organs",zh:"女性生殖器官總論",ver:"8",gen:1,d:{
+  sys:[
+    {title:"涵蓋部位",rows:[["外陰 Vulva / 陰道 Vagina","鱗癌為主"],["子宮頸 Cervix","v9 已更新（含影像/病理）"],["子宮體 Uterus","內膜癌、肉瘤"],["卵巢/輸卵管/腹膜","共用一套 FIGO/TNM"],["GTN","FIGO 分期＋WHO 評分"]]},
+    {title:"特點",rows:[["AJCC × FIGO","婦科分期以 FIGO 為主，TNM 對齊"],["分期方式","多以手術病理為準（cervix 近年納入影像）"]]}],
+  note:"婦科癌分期由 AJCC 與 FIGO 協作；各部位 stage grouping 見個別章節。"}},
 {ch:50,part:"XII. 女性生殖 Female Repro",en:"Vulva",zh:"外陰",ver:"9",y:2024,d:{
   T:[["T1a","≤2cm 且間質浸潤 ≤1mm，侷限外陰/會陰"],["T1b",">2cm 或間質浸潤 >1mm，侷限外陰/會陰"],["T2","任何大小，延伸至下 1/3 尿道、下 1/3 陰道或下 1/3 肛門"],["T3","延伸至上 2/3 尿道/陰道、膀胱/直腸黏膜，或固著於骨盆骨"]],
   N:[["N0","無"],["N1a","1–2 顆 <5mm"],["N1b","1 顆 ≥5mm"],["N2a","≥3 顆 <5mm"],["N2b","≥2 顆 ≥5mm"],["N2c","ENE（包膜外侵犯）"],["N3","固著或潰瘍性淋巴結"]],
@@ -401,8 +426,10 @@ const DATA = [
 {ch:58,part:"XIII. 男性生殖 Male Genital",en:"Prostate",zh:"前列腺",ver:"8",d:{
   T:[["T1","臨床無法觸知（T1a ≤5% TURP；T1b >5%；T1c 切片發現）"],["T2","侷限前列腺（T2a ≤半葉；T2b >半葉；T2c 兩葉）"],["T3a","包膜外侵犯"],["T3b","侵犯 seminal vesicle"],["T4","固定或侵犯鄰近結構（膀胱頸/直腸/提肛肌/骨盆壁）"]],
   N:[["N0","無"],["N1","區域淋巴結轉移"]],
-  M:[["M1a","非區域淋巴結"],["M1b","骨"],["M1c","其他部位"]],
-  note:"8e 前列腺 stage group (I–IVB) 同時納入 PSA 與 Grade Group（Gleason）。例：cT1–2a N0 M0 + PSA<10 + GG1 = Stage I。完整分組需 PSA 與 GG，請對照原表。"}},
+  M:[["M0","無"],["M1a","非區域淋巴結"],["M1b","骨"],["M1c","其他部位"]],
+  G:[["GG1","Gleason ≤6"],["GG2","Gleason 3+4=7"],["GG3","Gleason 4+3=7"],["GG4","Gleason 8 (4+4/3+5/5+3)"],["GG5","Gleason 9–10"]],
+  stage:[["I","cT1–2a N0 M0；PSA <10；GG1"],["IIA","cT1–2a N0 M0 PSA 10–<20 GG1；或 cT2b–c N0 M0 PSA <20 GG1"],["IIB","T1–2 N0 M0 PSA <20 GG2"],["IIC","T1–2 N0 M0 PSA <20 GG3–4"],["IIIA","T1–2 N0 M0 PSA ≥20 GG1–4"],["IIIB","T3–4 N0 M0 any PSA GG1–4"],["IIIC","any T N0 M0 any PSA GG5"],["IVA","any T N1 M0"],["IVB","any M1"]],
+  note:"8e 前列腺分期同時整合 T/N/M、PSA、Grade Group(GG)。GG5（Gleason 9–10）即使 N0M0 也屬 Stage IIIC。N1 ≥ Stage IVA。"}},
 {ch:59,part:"XIII. 男性生殖 Male Genital",en:"Testis",zh:"睪丸",ver:"8",d:{
   T:[["pTis","GCNIS（生殖細胞原位瘤）"],["pT1","侷限睪丸無 LVI（seminoma 再分 pT1a <3cm / pT1b ≥3cm）"],["pT2","LVI，或侵 hilar 軟組織/epididymis/tunica vaginalis"],["pT3","侵 spermatic cord"],["pT4","侵 scrotum"]],
   N:[["N0","無"],["N1","≤2cm 且 ≤5 顆"],["N2",">2–5cm，或 >5 顆，或結外侵犯"],["N3",">5cm"]],
@@ -513,7 +540,10 @@ const DATA = [
   note:"M 細分 M1a/M1b/M1c 反映轉移部位與預後。"}},
 
 /* Part XVIII Hematologic */
-{ch:78,part:"XVIII. 血液 Hematologic",en:"Introduction to Hematologic Malignancies",zh:"血液惡性腫瘤總論",ver:"8",gen:1,d:null},
+{ch:78,part:"XVIII. 血液 Hematologic",en:"Introduction to Hematologic Malignancies",zh:"血液惡性腫瘤總論",ver:"8",gen:1,d:{
+  sys:[
+    {title:"血液腫瘤不使用 TNM",rows:[["淋巴瘤","Lugano（Ann Arbor 修訂）"],["兒童淋巴瘤","St. Jude/Murphy、IPNHLSS"],["皮膚淋巴瘤(MF/SS)","ISCL/EORTC TNMB"],["漿細胞骨髓瘤","ISS / R-ISS"],["白血病","WHO 分類；CLL 用 Rai/Binet"]]}],
+  note:"血液惡性腫瘤以 WHO 分類與疾病專屬分期系統評估，非解剖 TNM。各系統見個別章節。"}},
 {ch:79,part:"XVIII. 血液 Hematologic",en:"Hodgkin and Non-Hodgkin Lymphomas",zh:"何杰金與非何杰金淋巴瘤",ver:"8",d:{
   sys:[
     {title:"Lugano 分期（Ann Arbor 修訂）",rows:[["I","單一淋巴結區或單一淋巴結構（脾/胸腺/Waldeyer 環）；或單一結外部位(IE)"],["II","橫膈同側 ≥2 淋巴結區；或 I/II 期合併鄰近局限結外侵犯(IIE)"],["II bulky","II 期合併 bulky disease"],["III","橫膈兩側淋巴結；或橫膈上淋巴結＋脾"],["IV","≥1 結外器官瀰漫/散播性侵犯（非鄰近）"]]},
@@ -597,7 +627,7 @@ function render(){
     const badge=d.ver==="9"
       ? `<span class="badge b9">9e${d.y?' · '+d.y:''}</span>`
       : `<span class="badge b8">8e</span>`;
-    const dflag=d.gen?'' : (d.d?'<span class="hasdetail">● 已填分期</span>':'<span class="nodetail">○ 待補</span>');
+    const dflag=d.gen?(d.d?'<span class="hasdetail">● 總論</span>':'') : (d.d?'<span class="hasdetail">● 已填分期</span>':'<span class="nodetail">○ 待補</span>');
     html+=`<div class="card" data-i="${idx}">
       <div class="row">
         <span class="ch">${d.ch}</span>
@@ -605,7 +635,7 @@ function render(){
         ${badge}
         <span class="arrow">▶</span>
       </div>
-      <div class="detail">${d.gen?'<div class="note">本章為總論/原則章節，無個別癌症 TNM 分期表。</div>':detailHTML(d.d)}</div>
+      <div class="detail">${d.d?detailHTML(d.d):(d.gen?'<div class="note">本章為總論/原則章節，無個別癌症 TNM 分期表。</div>':detailHTML(null))}</div>
     </div>`;
   });
   listEl.innerHTML=html||`<div class="empty">查無符合條件的項目</div>`;
