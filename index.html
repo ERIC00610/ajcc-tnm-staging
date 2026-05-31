@@ -107,7 +107,12 @@ const DATA = [
   N:HN_N,M:HN_M,stage:HN_STAGE,
   note:"8e 重點：T 納入 DOI（depth of invasion）、N 納入 ENE。"}},
 {ch:8,part:"II. 頭頸 Head & Neck",en:"Major Salivary Glands",zh:"大唾液腺",ver:"9",y:2026,d:null},
-{ch:9,part:"II. 頭頸 Head & Neck",en:"Nasopharynx",zh:"鼻咽",ver:"9",y:2025,d:null},
+{ch:9,part:"II. 頭頸 Head & Neck",en:"Nasopharynx",zh:"鼻咽",ver:"9",y:2025,d:{
+  T:[["T0","無原發腫瘤，EBV(+) 頸部淋巴結"],["T1","侷限鼻咽，或延伸至口咽/鼻腔，無咽旁侵犯"],["T2","咽旁侵犯；或鄰近軟組織（內/外翼肌、椎前肌）"],["T3","骨結構（顱底、頸椎）或鼻竇；需明確皮質骨破壞或骨髓浸潤"],["T4","顱內延伸、顱神經、下咽、眼眶、腮腺；或侵超過外翼肌外緣之廣泛軟組織"]],
+  N:[["N0","無"],["N1","單側頸部和/或單/雙側咽後淋巴結，≤6cm，位於環狀軟骨下緣以上"],["N2","雙側頸部 ≤6cm，環狀軟骨下緣以上"],["N3",">6cm 和/或低於環狀軟骨下緣；或影像明確 advanced ENE"]],
+  M:[["M0","無"],["M1a","≤3 個轉移病灶"],["M1b",">3 個轉移病灶"]],
+  stage:[["I","T1 N0"],["II","T0–1 N1；T2 N0–1"],["III","T0–2 N2；T3 N0–2"],["IVA","T4 any N；any T N3"],["IVB","any M1"]],
+  note:"v9 主要變動：N3 納入影像 advanced ENE；T3 需明確皮質骨破壞/骨髓浸潤；T4 納入超過外翼肌外緣之侵犯；M1 細分 M1a(≤3)/M1b(>3)。"}},
 {ch:10,part:"II. 頭頸 Head & Neck",en:"HPV-Mediated (p16+) Oropharynx",zh:"HPV相關(p16+)口咽",ver:"9",y:2026,d:null},
 {ch:11,part:"II. 頭頸 Head & Neck",en:"Oropharynx (p16-) & Hypopharynx",zh:"口咽(p16-)與下咽",ver:"8",d:{
   T:[["【口咽 p16(−)】",""],["T1","≤2cm"],["T2",">2–4cm"],["T3",">4cm 或延伸至會厭舌面"],["T4a","侵喉、舌深部肌肉、medial pterygoid、硬腭、下頜骨"],["T4b","侵 lateral pterygoid、pterygoid plates、側鼻咽、顱底、包覆 ICA"],["【下咽】",""],["T1","侷限單一 subsite 且 ≤2cm"],["T2",">一 subsite 或 >2–4cm，無半喉固定"],["T3",">4cm 或半喉固定或食道黏膜延伸"],["T4a","侵 thyroid/cricoid 軟骨、舌骨、甲狀腺、食道肌肉、中央區軟組織"],["T4b","侵 prevertebral fascia、包覆頸動脈、縱膈結構"]],
@@ -149,14 +154,24 @@ const DATA = [
   note:"適用小腸腺癌。"}},
 
 /* Part IV Lower GI */
-{ch:19,part:"IV. 下消化道 Lower GI",en:"Appendix Carcinoma",zh:"闌尾癌",ver:"9",y:2023,d:null},
+{ch:19,part:"IV. 下消化道 Lower GI",en:"Appendix Carcinoma",zh:"闌尾癌",ver:"9",y:2023,d:{
+  T:[["Tis","原位癌"],["Tis(LAMN)","LAMN 侷限於闌尾（未侵 muscularis propria 以外）"],["T1","侵 submucosa"],["T2","侵 muscularis propria"],["T3","穿 MP 至 subserosa 或 mesoappendix"],["T4a","穿 visceral peritoneum（含漿膜上黏液性腫瘤/無細胞黏液）"],["T4b","直接侵犯或黏附鄰近器官/構造"]],
+  N:[["N0","無"],["N1","1–3 顆（N1a 1 顆；N1b 2–3 顆）；N1c＝subserosa/mesentery tumor deposit 無淋巴結"],["N2","≥4 顆"]],
+  M:[["M0","無"],["M1a","僅腹腔無細胞黏液(acellular mucin)"],["M1b","腹腔內轉移（黏液或非黏液）±腹膜黏液"],["M1c","非腹膜之遠端轉移"]],
+  stage:[["0","Tis N0"],["I","T1–2 N0"],["IIA","T3 N0"],["IIB","T4a N0"],["IIC","T4b N0"],["IIIA","T1–2 N1"],["IIIB","T3–4 N1"],["IIIC","any T N2"],["IVA","M1a；或 M1b 且 G1"],["IVB","M1b 且 G2–G3"],["IVC","M1c"]],
+  note:"v9 依 2021 WHO：LAMN/HAMN 改列惡性。組織型（非黏液/黏液/印戒）與 grade 影響 stage IV 分組。腹膜病灶 grade 為關鍵預後因子。"}},
 {ch:20,part:"IV. 下消化道 Lower GI",en:"Colon & Rectum",zh:"結腸與直腸",ver:"8",d:{
   T:[["Tis","原位癌 / intramucosal（侵 lamina propria，未穿 muscularis mucosae）"],["T1","侵 submucosa"],["T2","侵 muscularis propria"],["T3","穿透 MP 入 pericolorectal tissue"],["T4a","穿透 visceral peritoneum"],["T4b","直接侵犯/黏連鄰近器官或結構"]],
   N:[["N0","0 顆"],["N1a","1 顆"],["N1b","2–3 顆"],["N1c","Tumor deposit，無陽性淋巴結"],["N2a","4–6 顆"],["N2b","≥7 顆"]],
   M:[["M1a","1 個器官/部位，無腹膜轉移"],["M1b","≥2 個器官/部位"],["M1c","腹膜轉移 ± 其他器官"]],
   stage:[["0","Tis N0"],["I","T1–2 N0"],["IIA","T3 N0"],["IIB","T4a N0"],["IIC","T4b N0"],["IIIA","T1–2 N1/N1c；T1 N2a"],["IIIB","T3–4a N1/N1c；T2–3 N2a；T1–2 N2b"],["IIIC","T4a N2a；T3–4a N2b；T4b N1–2"],["IVA","M1a"],["IVB","M1b"],["IVC","M1c"]],
   note:""}},
-{ch:21,part:"IV. 下消化道 Lower GI",en:"Anus",zh:"肛門",ver:"9",y:2023,d:null},
+{ch:21,part:"IV. 下消化道 Lower GI",en:"Anus",zh:"肛門",ver:"9",y:2023,d:{
+  T:[["T1","≤2cm"],["T2",">2–5cm"],["T3",">5cm"],["T4","侵鄰近器官（陰道/尿道/膀胱）；侵括約肌或直腸壁不算 T4"]],
+  N:[["N0","無"],["N1a","鼠蹊、腸繫膜、內髂或閉孔(obturator)淋巴結（v9 新增閉孔）"],["N1b","外髂淋巴結"],["N1c","外髂＋N1a 淋巴結"]],
+  M:[["M0","無"],["M1","遠端轉移"]],
+  stage:[["I","T1 N0"],["IIA","T2 N0"],["IIB","T1–2 N1"],["IIIA","T3 N0–1"],["IIIB","T4 N0"],["IIIC","T4 N1"],["IV","any M1"]],
+  note:"v9 變動：刪除 Tis/Stage 0（HSIL 非惡性）；閉孔淋巴結納入 N1a；分期重排（IIB＝T1-2N1、IIIA＝T3N0-1），因 T 對存活影響大於 N。"}},
 
 /* Part V Hepatobiliary */
 {ch:22,part:"V. 肝膽 Hepatobiliary",en:"Liver (HCC)",zh:"肝（肝細胞癌）",ver:"8",d:{
@@ -203,16 +218,51 @@ const DATA = [
   note:""}},
 
 /* Part VI NET */
-{ch:29,part:"VI. 神經內分泌 NET",en:"NET Stomach",zh:"胃神經內分泌瘤",ver:"9",y:2024,d:null},
-{ch:30,part:"VI. 神經內分泌 NET",en:"NET Duodenum & Ampulla of Vater",zh:"十二指腸與壺腹 NET",ver:"9",y:2024,d:null},
-{ch:31,part:"VI. 神經內分泌 NET",en:"NET Jejunum & Ileum",zh:"空腸與迴腸 NET",ver:"9",y:2024,d:null},
-{ch:32,part:"VI. 神經內分泌 NET",en:"NET Appendix",zh:"闌尾 NET",ver:"9",y:2024,d:null},
-{ch:33,part:"VI. 神經內分泌 NET",en:"NET Colon & Rectum",zh:"結腸與直腸 NET",ver:"9",y:2024,d:null},
-{ch:34,part:"VI. 神經內分泌 NET",en:"NET Pancreas",zh:"胰臟 NET",ver:"9",y:2024,d:null},
+{ch:29,part:"VI. 神經內分泌 NET",en:"NET Stomach",zh:"胃神經內分泌瘤",ver:"9",y:2024,d:{
+  T:[["T1","侵 lamina propria/submucosa 且 ≤1cm"],["T2","侵 muscularis propria 或 >1cm"],["T3","穿 muscularis propria 至 subserosa"],["T4","侵 visceral peritoneum(serosa) 或鄰近器官"]],
+  N:[["N0","無"],["N1","區域淋巴結轉移"]],
+  M:[["M0","無"],["M1a","僅肝轉移"],["M1b","僅肝外轉移"],["M1c","肝＋肝外"]],
+  stage:[["I","T1 N0"],["II","T2–3 N0"],["III","T4 N0；any T N1"],["IV","any M1"]],
+  note:"分化良好 NET 適用此表。Grade 依 mitoses/Ki-67（G1/G2/G3）。v9 強調內視鏡切除角色，不建議用 chromogranin A 監測。"}},
+{ch:30,part:"VI. 神經內分泌 NET",en:"NET Duodenum & Ampulla of Vater",zh:"十二指腸與壺腹 NET",ver:"9",y:2024,d:{
+  T:[["T1","侵 mucosa/submucosa 且 ≤1cm（非壺腹）"],["T2","侵 muscularis propria 或 >1cm"],["T3","侵 pancreas 或 peripancreatic 組織"],["T4","侵 visceral peritoneum 或其他器官"]],
+  N:[["N0","無"],["N1","區域淋巴結轉移"]],
+  M:[["M0","無"],["M1a","僅肝轉移"],["M1b","僅肝外轉移"],["M1c","肝＋肝外"]],
+  stage:[["I","T1 N0"],["II","T2–3 N0"],["III","T4 N0；any T N1"],["IV","any M1"]],
+  note:"壺腹 NET 另有獨立準則；分化良好者適用此表。"}},
+{ch:31,part:"VI. 神經內分泌 NET",en:"NET Jejunum & Ileum",zh:"空腸與迴腸 NET",ver:"9",y:2024,d:{
+  T:[["T1","侵 lamina propria/submucosa 且 ≤1cm"],["T2","侵 muscularis propria 或 >1cm"],["T3","穿至 subserosa（未過漿膜）"],["T4","侵 visceral peritoneum 或其他器官"]],
+  N:[["N0","無"],["N1","<12 顆區域淋巴結"],["N2","≥12 顆，或大型腸繫膜團塊(>2cm)"]],
+  M:[["M0","無"],["M1a","僅肝轉移"],["M1b","僅肝外轉移"],["M1c","肝＋肝外"]],
+  stage:[["I","T1 N0"],["II","T2–3 N0"],["III","T4 N0；any T N1–2"],["IV","any M1"]],
+  note:"v9 主要變動：N 細分 N1(<12 顆)與 N2(≥12 顆或大型繫膜團塊)，提升預後鑑別。"}},
+{ch:32,part:"VI. 神經內分泌 NET",en:"NET Appendix",zh:"闌尾 NET",ver:"9",y:2024,d:{
+  T:[["T1","≤2cm"],["T2",">2–4cm"],["T3",">4cm 或侵 subserosa/mesoappendix"],["T4","侵 visceral peritoneum 或其他器官"]],
+  N:[["N0","無"],["N1","區域淋巴結轉移"]],
+  M:[["M0","無"],["M1a","僅肝轉移"],["M1b","僅肝外轉移"],["M1c","肝＋肝外"]],
+  stage:[["I","T1 N0"],["II","T2–3 N0"],["III","T4 N0；any T N1"],["IV","any M1"]],
+  note:"分化良好 NET 適用；以大小為主要 T 分界。"}},
+{ch:33,part:"VI. 神經內分泌 NET",en:"NET Colon & Rectum",zh:"結腸與直腸 NET",ver:"9",y:2024,d:{
+  T:[["T1","侵 lamina propria/submucosa 且 ≤2cm（T1a <1；T1b 1–2cm）"],["T2","侵 muscularis propria 或 >2cm"],["T3","穿至 subserosa/pericolic 組織"],["T4","侵 visceral peritoneum 或其他器官"]],
+  N:[["N0","無"],["N1","區域淋巴結轉移"]],
+  M:[["M0","無"],["M1a","僅肝轉移"],["M1b","僅肝外轉移"],["M1c","肝＋肝外"]],
+  stage:[["I","T1 N0"],["II","T2–3 N0"],["III","T4 N0；any T N1"],["IV","any M1"]],
+  note:"直腸小型 NET 多可內視鏡切除。Grade 仍依 Ki-67/mitoses。"}},
+{ch:34,part:"VI. 神經內分泌 NET",en:"NET Pancreas",zh:"胰臟 NET",ver:"9",y:2024,d:{
+  T:[["T1","<2cm，侷限胰臟"],["T2","2–4cm，侷限胰臟"],["T3",">4cm，或侵十二指腸/總膽管"],["T4","侵鄰近器官（胃/脾/結腸/腎上腺）或大血管壁"]],
+  N:[["N0","無"],["N1","區域淋巴結轉移"]],
+  M:[["M0","無"],["M1a","僅肝轉移"],["M1b","僅肝外轉移"],["M1c","肝＋肝外"]],
+  stage:[["I","T1 N0"],["II","T2–3 N0"],["III","T4 N0；any T N1"],["IV","any M1"]],
+  note:"v9 對 pNET 之 T/N/M 無變動；新增 ALT 狀態、ATRX 缺失等預後標記討論。WHO 將 G3 NET 與低分化 NEC 分開。"}},
 
 /* Part VII Thorax */
 {ch:35,part:"VII. 胸腔 Thorax",en:"Thymus",zh:"胸腺",ver:"9",y:2025,d:null},
-{ch:36,part:"VII. 胸腔 Thorax",en:"Lung",zh:"肺",ver:"9",y:2025,d:null},
+{ch:36,part:"VII. 胸腔 Thorax",en:"Lung",zh:"肺",ver:"9",y:2025,d:{
+  T:[["T1","≤3cm，被肺/臟層肋膜包圍（T1mi 微浸潤腺癌；T1a ≤1；T1b >1–2；T1c >2–3）"],["T2",">3–5cm；或侵主支氣管(未及隆突)、臟層肋膜；或肺不張至肺門（T2a >3–4；T2b >4–5）"],["T3",">5–7cm；或侵胸壁/膈神經/壁層心包；或同葉衛星結節"],["T4",">7cm；或侵膈/縱膈/心臟/大血管/氣管/隆突/食道/椎體/喉返神經；或同側不同葉結節"]],
+  N:[["N0","無"],["N1","同側肺門/支氣管周圍/肺內"],["N2a","單一同側縱膈或隆突下淋巴結站"],["N2b","多個縱膈或隆突下淋巴結站"],["N3","對側縱膈/肺門；斜角肌/鎖骨上"]],
+  M:[["M0","無"],["M1a","對側肺結節；肋膜/心包結節或惡性積液"],["M1b","單一肺外轉移"],["M1c1","單一器官系統之多處肺外轉移"],["M1c2","多個器官系統之肺外轉移"]],
+  stage:[["IA1","T1mi/T1a N0"],["IA2","T1b N0"],["IA3","T1c N0"],["IB","T2a N0"],["IIA","T2b N0；T1 N1"],["IIB","T1 N2a；T2 N1；T3 N0"],["IIIA","T1–2 N2b；T3 N1–2a；T4 N0–1"],["IIIB","T1–2 N3；T3–4 N2b；T4 N2a"],["IIIC","T3–4 N3"],["IVA","any M1a/M1b"],["IVB","any M1c"]],
+  note:"v9 主要變動：N2 細分 N2a(單站)/N2b(多站)；M1c 細分 M1c1/M1c2。T 分類不變。分期重排：T1N1→IIA、T1N2a→IIB、T3N2a→IIIA、T2N2b→IIIB。"}},
 {ch:37,part:"VII. 胸腔 Thorax",en:"Pleural Mesothelioma",zh:"肋膜間皮瘤",ver:"9",y:2025,d:null},
 
 /* Part VIII Bone */
