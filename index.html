@@ -766,7 +766,130 @@ const TX={
     '分化型（乳突／濾泡）預後佳，以手術為主：依大小／侵犯範圍做甲狀腺全切除或腺葉切除，治療性頸部廓清視轉移而定。',
     '術後依復發風險選擇性給放射碘（RAI），以 TSH 抑制治療＋thyroglobulin 監測追蹤。',
     '<b>局部晚期／遠端轉移</b>：RAI 治療；RAI 難治者用 multikinase inhibitor（lenvatinib／sorafenib），或依分子標記（RET／NTRK／BRAF）給選擇性標靶。',
-    '<b>未分化型（anaplastic）</b>高度惡性，策略完全不同（多模式；BRAF V600E 者用 dabrafenib＋trametinib）。']}
+    '<b>未分化型（anaplastic）</b>高度惡性，策略完全不同（多模式；BRAF V600E 者用 dabrafenib＋trametinib）。']},
+  9:{title:'鼻咽癌 Nasopharynx', esmo:ESMO_HN, principles:[
+    '鼻咽癌對放化療高度敏感，因解剖位置深、緊鄰顱底神經，治療以非手術為主。',
+    '<b>早期（T1 N0）</b>：單獨根治性放療（IMRT）。',
+    '<b>局部晚期（≥T2 或 N+）</b>：同步化放療（cisplatin-based CCRT），多加誘導化療（induction）或輔助化療。',
+    '<b>復發／轉移（M1）</b>：全身化療（gemcitabine＋cisplatin）為一線＋PD-1 免疫治療；局部復發可再放療或鼻咽切除。',
+    'EBV DNA 為重要追蹤與預後標記；流行於華南／台灣。']},
+  14:{title:'頭頸黏膜黑色素瘤 Mucosal Melanoma', esmo:ESMO_HN, principles:[
+    '罕見且預後差，即使侷限也屬 AJCC 高分期（起始即 T3）。',
+    '<b>侷限可切除</b>：根治性手術切除（足夠邊界）為主，術後輔助放療改善局部控制。',
+    '<b>不可切除／復發／轉移</b>：免疫檢查點抑制劑（anti-PD-1±anti-CTLA-4）；BRAF／KIT 突變者考慮對應標靶。',
+    '整體預後較皮膚黑色素瘤差，遠端轉移風險高。']},
+  15:{title:'頭頸皮膚癌 Cutaneous Carcinoma', esmo:ESMO_HN, principles:[
+    '多為皮膚鱗狀細胞癌（cSCC），治療以手術為主。',
+    '<b>侷限</b>：完整手術切除（高風險區用 Mohs 顯微手術）；高風險特徵（深部侵犯、神經周圍侵犯、切緣陽性）加術後放療。',
+    '<b>區域淋巴結轉移</b>：淋巴結廓清±術後放療／化放療。',
+    '<b>不可切除／轉移</b>：免疫治療（cemiplimab／pembrolizumab）；不適合者考慮 EGFR 抑制或化療。']},
+  18:{title:'小腸腺癌 Small Intestine', esmo:ESMO_GI, principles:[
+    '罕見；治療以手術為主—根治性節段切除＋區域淋巴結廓清。',
+    '<b>淋巴結陽性（III 期）</b>：術後輔助化療（fluoropyrimidine-based，如 FOLFOX）。',
+    '<b>轉移</b>：全身化療為主，並做 MMR／MSI、HER2 分子檢測指導免疫／標靶。',
+    '須與 NET、淋巴瘤、GIST 等其他小腸腫瘤鑑別（治療策略不同）。']},
+  21:{title:'肛門癌 Anus', esmo:ESMO_GI, principles:[
+    '肛管鱗狀細胞癌以「器官保留」為原則，首選根治性同步化放療（5-FU＋mitomycin＋放療，Nigro regimen），多數可免人工肛門。',
+    '<b>手術（APR）</b>保留給化放療後殘留或局部復發的挽救性治療。',
+    '<b>轉移（M1）</b>：全身化療（platinum-based）±免疫治療。',
+    '與 HPV 感染相關；HIV 陽性族群風險高。']},
+  23:{title:'肝內膽管癌 Intrahepatic Cholangiocarcinoma', esmo:ESMO_GI, principles:[
+    '<b>可切除</b>：根治性肝切除＋淋巴結取樣為唯一治癒機會；術後輔助 capecitabine。',
+    '<b>不可切除／局部晚期</b>：全身化療（gemcitabine＋cisplatin±免疫 durvalumab），局部可放療／肝動脈治療。',
+    '<b>轉移</b>：全身治療為主；分子檢測（IDH1、FGFR2 fusion、HER2、MSI）指導後線標靶。']},
+  24:{title:'膽囊癌 Gallbladder', esmo:ESMO_GI, principles:[
+    '多在膽囊切除後病理意外發現；治療依侵犯深度。',
+    '<b>T1a（侷限黏膜固有層）</b>：單純膽囊切除多已足夠。',
+    '<b>≥T1b</b>：擴大根治性切除（含肝床楔形切除＋區域淋巴結廓清，re-resection）。',
+    '<b>進階／淋巴結陽性</b>：術後輔助化療（capecitabine）。<b>不可切除／轉移</b>：gemcitabine＋cisplatin±durvalumab。']},
+  25:{title:'肝門膽管癌 Perihilar Cholangiocarcinoma', esmo:ESMO_GI, principles:[
+    '<b>可切除</b>：根治性切除（膽管＋部分肝切除＋區域淋巴結廓清），常需術前膽道引流與殘餘肝體積評估。',
+    '部分嚴選且符合條件的不可切除病例，可走新輔助化放療＋肝移植 protocol。',
+    '術後輔助 capecitabine。',
+    '<b>不可切除／轉移</b>：gemcitabine＋cisplatin±durvalumab＋膽道引流支持。']},
+  27:{title:'壺腹癌 Ampulla of Vater', esmo:ESMO_GI, principles:[
+    '<b>可切除</b>：胰十二指腸切除術（Whipple）＋區域淋巴結廓清。',
+    '術後輔助化療依組織型態（胰膽型 vs 腸型）決定方案。',
+    '<b>轉移</b>：全身化療；腸型參考大腸癌方案、胰膽型參考膽道／胰臟方案。',
+    '預後通常較胰臟癌佳（早期黃疸利於早診）。']},
+  28:{title:'胰臟腺癌 Exocrine Pancreas', esmo:ESMO_GI, principles:[
+    '治療依「可切除性」分流（resectable／borderline／locally advanced／metastatic）。',
+    '<b>可切除</b>：手術切除（Whipple 或遠端胰切除）＋術後輔助化療（mFOLFIRINOX 或 gemcitabine-based）。',
+    '<b>Borderline／局部晚期</b>：新輔助化療±放療後再評估手術。',
+    '<b>轉移</b>：全身化療為主（FOLFIRINOX 或 gemcitabine＋nab-paclitaxel）；BRCA／PALB2 突變考慮 platinum／PARP 抑制劑。',
+    '預後差，重視營養、膽道引流與症狀控制。']},
+  29:{title:'胃神經內分泌瘤 NET Stomach', esmo:ESMO_ENDO, principles:[
+    '胃 NET 分三型：Type 1（萎縮性胃炎／高 gastrin，多良性）、Type 2（MEN1／ZES）、Type 3（散發、侵襲性）。',
+    '<b>Type 1／2 小病灶</b>：內視鏡切除＋監測，並治療潛在病因。',
+    '<b>Type 3 或較大／侵犯</b>：手術切除（胃部分／全切除＋淋巴結）。',
+    '<b>進階／轉移</b>：somatostatin analog、PRRT（177Lu-DOTATATE）、化療（高分級 NEC）。']},
+  30:{title:'十二指腸與壺腹 NET', esmo:ESMO_ENDO, principles:[
+    '<b>小型非壺腹十二指腸 NET</b>：內視鏡切除可行。',
+    '<b>較大、壺腹部或侵犯肌層</b>：手術切除（局部切除或胰十二指腸切除）。',
+    '<b>進階／轉移</b>：somatostatin analog（SSTR+）、PRRT、標靶。',
+    '壺腹部 NET 較具侵襲性，較早淋巴轉移。']},
+  31:{title:'空腸與迴腸 NET（midgut）', esmo:ESMO_ENDO, principles:[
+    '最常見 GI NET；常多發、易腸繫膜纖維化與淋巴轉移。',
+    '<b>侷限</b>：根治性節段切除＋腸繫膜淋巴結廓清。',
+    '<b>類癌症候群</b>（肝轉移、serotonin）：somatostatin analog 控制症狀。',
+    '<b>轉移</b>：somatostatin analog 抗增生、PRRT、肝臟導向治療（減積／栓塞）。']},
+  32:{title:'闌尾 NET Appendix', esmo:ESMO_ENDO, principles:[
+    '多為闌尾切除後意外發現，預後佳。',
+    '<b><1 cm、基底乾淨</b>：單純闌尾切除已足夠。',
+    '<b>>2 cm，或繫膜侵犯／切緣陽性／高風險</b>：右半結腸切除＋淋巴結廓清。',
+    '<b>1–2 cm</b>：依風險特徵個別決定。']},
+  33:{title:'結腸與直腸 NET', esmo:ESMO_ENDO, principles:[
+    '<b>直腸小 NET（<1 cm、侷限黏膜下）</b>：內視鏡切除可治癒。',
+    '<b>1–2 cm 或侵犯肌層／淋巴血管</b>：局部或根治性手術。',
+    '<b>結腸 NET 或 >2 cm</b>：根治性切除＋淋巴結廓清（行為較惡）。',
+    '<b>轉移</b>：somatostatin analog、PRRT、化療（高分級）。']},
+  34:{title:'胰臟 NET（panNET）', esmo:ESMO_ENDO, principles:[
+    '功能性（insulinoma／gastrinoma 等）以症狀控制＋手術為主；非功能性小腫瘤（<2 cm）可監測。',
+    '<b>侷限</b>：手術切除（摘除術或胰切除）。',
+    '<b>進階／轉移、SSTR+</b>：somatostatin analog；進展後 everolimus、sunitinib、PRRT、化療（capecitabine＋temozolomide）。',
+    '與 MEN1、VHL 等遺傳症候群相關。']},
+  35:{title:'胸腺瘤／胸腺癌 Thymus', esmo:ESMO_LUNG, principles:[
+    '治療以手術為主：完整胸腺切除（thymectomy）為可切除病灶核心。',
+    '<b>可切除</b>：手術±術後放療（依 Masaoka-Koga 分期與切緣）。',
+    '<b>不可切除／局部晚期</b>：誘導化療後評估手術，或根治性化放療。',
+    '<b>轉移／復發</b>：全身化療（platinum-based）。',
+    '常合併重症肌無力等副腫瘤症候群，需一併評估。']},
+  37:{title:'惡性肋膜間皮瘤 Pleural Mesothelioma', esmo:ESMO_LUNG, principles:[
+    '與石棉暴露相關，預後差，多於診斷時已局部晚期。',
+    '<b>嚴選早期可切除</b>：多模式治療（手術 P/D 或 EPP＋化療±放療）。',
+    '<b>多數不可切除</b>：全身治療為主—免疫雙藥（nivolumab＋ipilimumab），或化療（platinum＋pemetrexed±bevacizumab）。',
+    '重視症狀控制（肋膜積液引流／沾黏術）。']},
+  60:{title:'腎細胞癌 Kidney (RCC)', esmo:ESMO_GU, principles:[
+    '<b>侷限性</b>：根治性或部分腎切除為主；小腫瘤（T1a）可主動監測或消融。',
+    '<b>高復發風險術後</b>：部分病例輔助 pembrolizumab。',
+    '<b>轉移（M1）</b>：依風險分層—免疫合併療法（ipilimumab＋nivolumab，或 PD-1＋TKI 如 axitinib／lenvatinib＋pembrolizumab）。',
+    '寡轉移可考慮轉移病灶切除／局部治療；RCC 對傳統化療不敏感。']},
+  61:{title:'上泌尿道尿路上皮癌 UTUC', esmo:ESMO_GU, principles:[
+    '<b>標準治療</b>：根治性腎輸尿管切除術（含膀胱袖口 cuff）＋淋巴結廓清。',
+    '<b>低風險、單一小病灶</b>：可考慮保留腎元的內視鏡治療。',
+    '<b>肌肉侵犯／高風險</b>：新輔助 cisplatin-based 化療；術後可膀胱內灌注降低膀胱復發。',
+    '<b>轉移</b>：比照膀胱尿路上皮癌（platinum 化療、enfortumab vedotin＋pembrolizumab、免疫維持、FGFR 抑制劑）。']},
+  63:{title:'尿道癌 Urethra', esmo:ESMO_GU, principles:[
+    '罕見，治療依位置（前／後尿道）、性別與分期；組織型態多為尿路上皮或鱗狀細胞癌。',
+    '<b>侷限遠端</b>：局部切除（保留功能）為主。',
+    '<b>侵犯性／近端</b>：根治性手術（可能需大範圍切除與重建）±化放療。',
+    '<b>局部晚期／轉移</b>：以化放療或全身化療為主，依組織型態選方案。']},
+  74:{title:'甲狀腺髓質癌 MTC', esmo:ESMO_ENDO, principles:[
+    '源自濾泡旁 C 細胞、分泌 calcitonin；不攝取放射碘（RAI 無效）。',
+    '<b>治療核心是手術</b>：甲狀腺全切除＋中央區（±側頸）淋巴結廓清。',
+    '術後以 calcitonin／CEA 追蹤；持續或復發評估再手術／局部治療。',
+    '<b>進階／轉移</b>：RET 抑制劑（selpercatinib／pralsetinib，依 RET 突變）優選，或 multikinase inhibitor（vandetanib／cabozantinib）。',
+    '評估遺傳性（MEN2，RET 胚系突變）與嗜鉻細胞瘤共病。']},
+  76:{title:'腎上腺皮質癌 ACC', esmo:ESMO_ENDO, principles:[
+    '罕見且侵襲性高；<b>可切除者</b>以完整根治性手術（open en-bloc R0，由經驗中心執行）為主。',
+    '<b>術後輔助 mitotane</b>（±放療）降低復發，尤其高風險（Ki-67 高、切緣陽性）。',
+    '評估荷爾蒙過量（cortisol、androgen）並處理。',
+    '<b>進階／轉移</b>：mitotane±EDP 化療（etoposide＋doxorubicin＋cisplatin）。']},
+  77:{title:'嗜鉻細胞瘤／副神經節瘤 PPGL', esmo:ESMO_ENDO, principles:[
+    '<b>術前必須先以 α-blocker（±β-blocker）做充分阻斷</b>，避免術中高血壓危象。',
+    '<b>侷限</b>：根治性手術切除（嗜鉻細胞瘤多採腹腔鏡腎上腺切除）為主。',
+    '<b>惡性／轉移</b>：手術減積、131I-MIBG、PRRT、化療（CVD）或標靶（sunitinib），依 SDHB 等基因與 SSTR 攝取。',
+    '高比例遺傳性（SDHx、VHL、RET、NF1），建議基因檢測。']}
 };
 // 治療指引摘要 HTML（僅常見癌別）
 function txHTML(ch){
